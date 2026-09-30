@@ -1,13 +1,78 @@
-<nav class="nav nav-underline flex-nowrap overflow-auto mb-4" aria-label="{olang.R_KJ_PAYMENT_OPTIONS}">
-    <a class="nav-link text-nowrap<IF NAME="kjp_is_home"> active</IF>" href="./?cp=kj_payment_options">{lang.HOME}</a>
-    <a class="nav-link text-nowrap<IF NAME="current_smt == all_transactions"> active</IF>" href="./?cp=kj_payment_options&amp;smt=all_transactions">{olang.KJP_ALL_TRNC}</a>
-    <a class="nav-link text-nowrap<IF NAME="current_smt == canceled_payment"> active</IF>" href="./?cp=kj_payment_options&amp;smt=canceled_payment">{olang.KJP_CNCLD_PAY}</a>
-    <!-- Checking Subscriptions is it active or not-->
-    <IF NAME="config.kjp_active_subscriptions">
-    <a class="nav-link text-nowrap<IF NAME="current_smt == subscriptions"> active</IF>" href="./?cp=kj_payment_options&amp;smt=subscriptions">{olang.KJP_SUBSCRIPTIONS}</a>
-    </IF>
-    <a class="nav-link text-nowrap<IF NAME="current_smt == payouts"> active</IF>" href="./?cp=kj_payment_options&amp;smt=payouts">{olang.KJP_PAYOUTS}</a>
-    <a class="nav-link text-nowrap<IF NAME="current_smt == pricing_file"> active</IF>" href="./?cp=kj_payment_options&amp;smt=pricing_file">{olang.KJP_PRC_FILE}</a>
-    <a class="nav-link text-nowrap<IF NAME="current_smt == paid_files"> active</IF>" href="./?cp=kj_payment_options&amp;smt=paid_files">{olang.KJP_PAID_FILE}</a>
-    <a class="nav-link text-nowrap<IF NAME="current_smt == help"> active</IF>" href="./?cp=kj_payment_options&amp;smt=help">{olang.KJP_HLP}</a>
-</nav>
+<!-- the sections of the payments control, they are the tabs of the card that holds every page -->
+<div class="card-header">
+    <IGNORE>
+    <style>
+        /* all the tabs stay on one row, a narrow screen scrolls them sideways */
+        .kjp-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            /* the row reaches over the line under it, so the active tab stays joined to the page below */
+            margin-bottom: calc(-1 * (var(--bs-card-cap-padding-y) + var(--bs-nav-tabs-border-width)));
+            padding-bottom: var(--bs-nav-tabs-border-width);
+        }
+
+        .kjp-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .kjp-tabs .nav-link {
+            white-space: nowrap;
+        }
+
+        /* the ring is drawn inside the tab, outside of it the scrolling row would cut it */
+        .kjp-tabs .nav-link:focus-visible {
+            box-shadow: inset 0 0 0 0.2rem var(--bs-focus-ring-color);
+        }
+
+        @media (max-width: 1399.98px) {
+            .kjp-tabs .nav-link {
+                padding-inline: 0.75rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+    </IGNORE>
+
+    <ul class="nav nav-tabs card-header-tabs kjp-tabs">
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="kjp_is_home"> active</IF>" href="./?cp=kj_payment_options">{lang.HOME}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == all_transactions"> active</IF>" href="./?cp=kj_payment_options&amp;smt=all_transactions">{olang.KJP_ALL_TRNC}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == canceled_payment"> active</IF>" href="./?cp=kj_payment_options&amp;smt=canceled_payment">{olang.KJP_CNCLD_PAY}</a>
+        </li>
+        <!-- Checking Subscriptions is it active or not-->
+        <IF NAME="config.kjp_active_subscriptions">
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == subscriptions"> active</IF>" href="./?cp=kj_payment_options&amp;smt=subscriptions">{olang.KJP_SUBSCRIPTIONS}</a>
+        </li>
+        </IF>
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == payouts"> active</IF>" href="./?cp=kj_payment_options&amp;smt=payouts">{olang.KJP_PAYOUTS}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == pricing_file"> active</IF>" href="./?cp=kj_payment_options&amp;smt=pricing_file">{olang.KJP_PRC_FILE}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == paid_files"> active</IF>" href="./?cp=kj_payment_options&amp;smt=paid_files">{olang.KJP_PAID_FILE}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link<IF NAME="current_smt == help"> active</IF>" href="./?cp=kj_payment_options&amp;smt=help">{olang.KJP_HLP}</a>
+        </li>
+    </ul>
+
+    <IGNORE>
+    <script>
+        // the active tab may be out of the row on a narrow screen, bring it into view
+        (function (tab) {
+            if (tab) {
+                tab.scrollIntoView({ block: "nearest", inline: "center" });
+            }
+        })(document.querySelector(".kjp-tabs .active"));
+    </script>
+    </IGNORE>
+</div>

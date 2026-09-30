@@ -21,10 +21,17 @@ $current_smt = preg_replace('/[^a-z0-9_]/i', '', g('smt', 'str', ''));
 // for the tabs of the pages
 $kjp_is_home = empty($current_smt);
 $page_url = basename(ADMIN_PATH) . '?cp=kj_payment_options';
+// the guide of the plugin is on the help page of Kleeja, php/help.php adds it there
+$kjp_help_url = basename(ADMIN_PATH) . '?cp=s_help&amp;page=kj_payment_options';
 $currency = strtoupper($config['kjp_iso_currency_code']);
 $page_nums = '';
 // the forms of this page change the prices and send money, all of them have this key
 $H_FORM_KEYS = kleeja_add_form_key('kj_payment_options');
+
+// the help page that the plugin had before, old links still point to it
+if ($current_smt == 'help') {
+    redirect($kjp_help_url);
+}
 
 if (empty($current_smt)) {
     $FormActions = $page_url;
@@ -663,16 +670,6 @@ if (empty($current_smt)) {
             ];
         }
     }
-} elseif ($current_smt == 'help') {
-    $stylee = 'help';
-    $settings_link = basename(ADMIN_PATH) . '?cp=options&amp;smt=kleeja_payment';
-    $methods_link = basename(ADMIN_PATH) . '?cp=options&amp;smt=kj_pay_active_mthd';
-    // the link that a PayPal or a Stripe account may ask about
-    $return_link = $config['siteurl'] . 'go.php';
-    $KJP_HELP = [
-        /* [ 'ID' => 'Example_ID' , 'TITLE' => 'Example Title', 'CONTENT' => 'Example Content'] */
-    ];
-    extract(runHook('KjPay:KLJ_HELP', get_defined_vars()));
 } elseif ($current_smt == 'subscriptions') {
     // dont disply `subscriptions` pages when it's disabled
     if (! $config['kjp_active_subscriptions']) {
@@ -895,8 +892,8 @@ $go_menu = [
     ],
     'help' => [
         'name' => $olang['KJP_HLP'],
-        'link' => $page_url . '&amp;smt=help',
+        'link' => $kjp_help_url,
         'goto' => 'help',
-        'current' => $current_smt == 'help',
+        'current' => false,
     ],
 ];

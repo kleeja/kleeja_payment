@@ -32,7 +32,7 @@ $kleeja_plugin['kleeja_payment']['information'] = [
     // min version of kleeja that's required to run this plugin
     'plugin_kleeja_version_min' => '4.0.0',
     // max version of kleeja that support this plugin, use 0 for unlimited
-    'plugin_kleeja_version_max' => '3.9',
+    'plugin_kleeja_version_max' => '4.9',
     // should this plugin run before others?, 0 is normal, and higher number has high priority
     'plugin_priority' => 10, // only for define support_kjPay
     // setting page to display in plugins page
@@ -42,8 +42,8 @@ $kleeja_plugin['kleeja_payment']['information'] = [
 //after installation message, you can remove it, it's not requiered
 $kleeja_plugin['kleeja_payment']['first_run']['ar'] = "
 باستخدام هذا البرنامج المساعد ، يمكنك تسعير الملفات والمجموعات لبيعها ، واستلام الدفعات إلى حساب PayPal أو Stripe الخاص بك تلقائيًا <br>
-قم يزيارة صفحة المساعدة للمزيد <br>
-<a href='./index.php?cp=kj_payment_options&smt=help' >المساعدة</a>
+قم بزيارة صفحة المساعدة للمزيد <br>
+<a href='./index.php?cp=s_help&page=kj_payment_options' >المساعدة</a>
 
 ";
 
@@ -52,7 +52,7 @@ With this plugin you can sell files and paid groups, and receive the payments to
 <br>
 
 for more info visit help page <br>
-<a href='./index.php?cp=kj_payment_options&smt=help' >Help</a>
+<a href='./index.php?cp=s_help&page=kj_payment_options' >Help</a>
 
 ";
 
@@ -745,6 +745,17 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
         $include_alternative = __DIR__ . '/php/kj_payment_options.php';
 
         return compact('include_alternative');
+    },
+
+    // the guide of the plugin on the help page of Kleeja, its words are in language/help_{language}.php
+    'admin_help_guides' => function ($args) {
+        require_once __DIR__ . '/php/help.php';
+
+        $help_guides = $args['help_guides'];
+        // the name of the plugin is the key, so Kleeja knows that the plugin has its guide
+        $help_guides['kleeja_payment'] = kjp_help_guide();
+
+        return compact('help_guides');
     },
 
     'Saaheader_links_func' => function ($args) {

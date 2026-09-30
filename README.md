@@ -6,7 +6,7 @@ A plugin for [Kleeja](https://github.com/kleeja/kleeja), the file upload script.
 - The owner of a file gets a share of every sale, and can withdraw it to a PayPal account.
 - A subscription opens all the files for a number of days.
 
-Read the [Quick Start Guide](https://github.com/kleeja/kleeja_payment/wiki/), or open the help page of the plugin in the control panel.
+Read the [Quick Start Guide](https://github.com/kleeja/kleeja_payment/wiki/), or open **Help** in the control panel: the plugin adds its guide there, in English and Arabic. The words of the guide are in `language/help_en.php` and `language/help_ar.php`.
 
 ## Requirements
 

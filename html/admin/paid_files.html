@@ -1,58 +1,57 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
-<div class="card">
-    <div class="card-header">
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_PAID_FILE}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.KJP_PAID_FILE}</h1>
     </div>
-    <div class="card-body">
+</div>
 
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
 
-        <table class="table table-bordered">
+<div class="card">
+    <IF NAME="have_paid_file">
+    <div class="table-responsive">
+        <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col" style="width: 4rem">#</th>
                     <th scope="col">{olang.KJP_FILE_NAME}</th>
                     <th scope="col">{olang.KJP_MEMBER}</th>
                     <th scope="col">{olang.KJP_PRC}</th>
-                    <th scope="col">{olang.KJP_ACTION}</th>
-
+                    <th scope="col" class="text-end"><span class="visually-hidden">{olang.KJP_ACTION}</span></th>
                 </tr>
             </thead>
             <tbody>
-                <IF NAME="have_paid_file == true">
-
-                    <LOOP NAME="all_paid_file">
-                        <tr>
-                            <th scope="row">{{id}}</th>
-                            <td>
-                                <a href="{{link}}" target="_blank">{{name}}</a>
-                            </td>
-                            <td>{{user}}</td>
-                            <td>{{price}}</td>
-                            <td>
-                                <form method="POST" action="./?cp=kj_payment_options&smt=pricing_file">
-                                    <input type="hidden" name="select_file_id" value="{{id}}">
-                                    <button name="open_file" class="btn btn-primary btn-sm" type="submit">{olang.KJP_EDT_PRC}</button>
-                                </form>
-                            </td>
-
-                        </tr>
-
-                    </LOOP>
-
-                    <ELSE>
-
-                        <div class="alert alert-info" role="alert">
-                            {olang.KJP_NO_PAID_FILES}
-                        </div>
-
-                </IF>
+                <LOOP NAME="all_paid_file">
+                <tr>
+                    <td class="text-body-secondary">{{id}}</td>
+                    <td class="fw-semibold text-break"><a href="{{link}}" target="_blank" rel="noopener">{{name}}</a></td>
+                    <td>{{user}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{price}}</td>
+                    <td class="text-end">
+                        <form method="post" action="{FormAction}">
+                            <input type="hidden" name="select_file_id" value="{{id}}">
+                            <button type="submit" name="open_file" value="1" class="btn btn-sm btn-outline-secondary text-nowrap">
+                                <i class="fa-solid fa-pen" aria-hidden="true"></i><span>{olang.KJP_EDT_PRC}</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </LOOP>
             </tbody>
         </table>
-        {page_nums}
     </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-tags" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_PAID_FILES}</p>
+    </div>
+    </IF>
 </div>
+
+<div class="kj-pager mt-3">{page_nums}</div>

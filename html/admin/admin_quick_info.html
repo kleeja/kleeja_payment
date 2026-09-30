@@ -1,197 +1,188 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
-
-<div class="card">
-    <div class="card-header">
-
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
-    <div class="card-body">
-
-        <div class="row">
-            <div class="col-sm-6 mt-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between p-1">
-                            <div>
-                                {olang.KJP_ALL_TRNC} <span class="badge badge-secondary badge-pill">{trnc_count}</span>
-                            </div>
-                            <a href="{viewAll_btn}" class="btn btn-primary btn-sm py-0">{olang.KJP_VIEW_ALL}</a>
-                        </div>
-                        <p class="m-0"><small class="muted">{olang.KJP_TRNC_CP_INFO}</small></p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <LOOP NAME="all_trnc_panel">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{methodName}}
-                                <span class="badge badge-secondary ">{{htmlContent}}</span>
-                            </li>
-                        </LOOP>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-6 mt-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between p-1">
-                            <div>
-                                {olang.KJP_D_TRNC} <span
-                                    class="badge badge-secondary badge-pill">{daily_trnc_count}</span>
-                            </div>
-                            <a href="{viewtoday_btn}" class="btn btn-primary btn-sm py-0">{olang.KJP_VIEW_ALL}</a>
-                        </div>
-                        <p class="m-0"><small class="muted">{olang.KJP_TRNC_CP_INFO}</small></p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <LOOP NAME="daily_trnc_panel">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{methodName}}
-                                <span class="badge badge-secondary ">{{htmlContent}}</span>
-                            </li>
-                        </LOOP>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-sm-6 mt-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between p-1">
-                            <div>
-                                {olang.KJP_M_TRNC}
-                                <span class="badge badge-secondary badge-pill">{monthly_trnc_count}</span>
-                            </div>
-                            <a href="{viewmonth_btn}" class="btn btn-primary btn-sm py-0">{olang.KJP_VIEW_ALL}</a>
-                        </div>
-                        <p class="m-0"><small class="muted">{olang.KJP_TRNC_CP_INFO}</small></p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <LOOP NAME="monthly_trnc_panel">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{methodName}}
-                                <span class="badge badge-secondary">{{htmlContent}}</span>
-                            </li>
-                        </LOOP>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-sm-6 mt-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between p-1">
-                            <div>
-                                {olang.KJP_OPN_ARCHIVE}
-                            </div>
-                        </div>
-                        <p class="m-0"><small class="muted">{olang.KJP_ARCHIVE_NOTE}</small></p>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        <form method="POST" action="{FormActions}">
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                {lang.W_PERIODS_6}
-                                <select name="archive_year" class="custom-select">
-                                    <LOOP NAME="years">
-                                        <option value="{{value}}">{{value}}</option>
-                                    </LOOP>
-                                </select>
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                {lang.W_PERIODS_5}
-                                <select name="archive_month" class="custom-select">
-                                    <LOOP NAME="months">
-                                        <option value="{{value}}">{{value}}</option>
-                                    </LOOP>
-                                </select>
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                {lang.W_PERIODS_3}
-                                <select name="archive_day" class="custom-select">
-                                    <option value=""></option>
-                                    <LOOP NAME="days">
-                                        <option value="{{value}}">{{value}}</option>
-                                    </LOOP>
-                                </select>
-                            </div>
-                            <div class="list-group-item d-flex justify-content-end">
-                                <button type="submit" name="open_archive"
-                                    class="btn btn-primary btn-sm">{olang.KJP_ARCH_OPN}</button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-            <div class="col-sm-12 mt-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between p-1">
-                            <div>
-                                {olang.KJP_PAY_OPN}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group list-group-flush">
-                        <form method="POST" action="{FormActions}">
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <input type="number" name="payment_number" class="form-control mx-1" placeholder="{olang.KJP_PAY_ID}">
-                                <button type="submit" name="open_payment" class="btn btn-primary btn-sm mx-1">{olang.KJP_PAY_OPN}</button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-
-
-        <div class="card mt-5">
-            <div class="card-body">
-                <h4 class="card-title">{olang.KJP_PEND_PAY}</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">{olang.KJP_MEMBER}</th>
-                            <th scope="col">{olang.KJP_ACTION}</th>
-                            <th scope="col">{lang.IP}</th>
-                            <th scope="col">{olang.KJP_DATE_TIME}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <IF NAME="PendPayNum">
-
-                            <LOOP NAME="PendPay">
-                                <tr>
-                                    <th scope="row">{{PayID}}</th>
-                                    <td>{{PayUser}}</td>
-                                    <td>{{PayAction}}</td>
-                                    <td>{{PayIP}}</td>
-                                    <td>{{PayDateTime}}</td>
-                                </tr>
-
-                            </LOOP>
-
-                            <ELSE>
-
-                                <div class="alert alert-info" role="alert">
-                                    {olang.KJP_NO_PEND_PAY}
-                                </div>
-
-                        </IF>
-
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.R_KJ_PAYMENT_OPTIONS}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.R_KJ_PAYMENT_OPTIONS}</h1>
+        <p class="kj-page-subtitle">{olang.KJP_TRNC_CP_INFO}</p>
+    </div>
+    <div class="kj-page-actions">
+        <a class="btn btn-outline-secondary btn-sm" href="./?cp=options&amp;smt=kleeja_payment">
+            <i class="fa-solid fa-sliders" aria-hidden="true"></i><span>{olang.CONFIG_KLJ_MENUS_KLEEJA_PAYMENT}</span>
+        </a>
     </div>
 </div>
+
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+
+<!-- numbers of the approved payments -->
+<div class="row row-cols-1 row-cols-lg-3 g-3 mb-4">
+    <div class="col">
+        <div class="card kj-stat h-100">
+            <div class="card-body">
+                <div>
+                    <div class="kj-stat-label">{olang.KJP_ALL_TRNC}</div>
+                    <div class="kj-stat-value">{trnc_count}</div>
+                </div>
+                <span class="kj-icon-tile"><i class="fa-solid fa-receipt" aria-hidden="true"></i></span>
+            </div>
+            <ul class="list-group list-group-flush border-top flex-grow-1">
+                <LOOP NAME="all_trnc_panel">
+                <li class="list-group-item kj-kv"><span>{{methodName}}</span><span>{{htmlContent}}</span></li>
+                </LOOP>
+            </ul>
+            <div class="card-footer">
+                <a href="{viewAll_btn}">{olang.KJP_VIEW_ALL} <i class="fa-solid fa-angle-right kj-flip-rtl" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card kj-stat h-100">
+            <div class="card-body">
+                <div>
+                    <div class="kj-stat-label">{olang.KJP_M_TRNC}</div>
+                    <div class="kj-stat-value">{monthly_trnc_count}</div>
+                </div>
+                <span class="kj-icon-tile is-navy"><i class="fa-regular fa-calendar" aria-hidden="true"></i></span>
+            </div>
+            <ul class="list-group list-group-flush border-top flex-grow-1">
+                <LOOP NAME="monthly_trnc_panel">
+                <li class="list-group-item kj-kv"><span>{{methodName}}</span><span>{{htmlContent}}</span></li>
+                </LOOP>
+            </ul>
+            <div class="card-footer">
+                <a href="{viewmonth_btn}">{olang.KJP_VIEW_ALL} <i class="fa-solid fa-angle-right kj-flip-rtl" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card kj-stat h-100">
+            <div class="card-body">
+                <div>
+                    <div class="kj-stat-label">{olang.KJP_D_TRNC}</div>
+                    <div class="kj-stat-value">{daily_trnc_count}</div>
+                </div>
+                <span class="kj-icon-tile is-success"><i class="fa-regular fa-clock" aria-hidden="true"></i></span>
+            </div>
+            <ul class="list-group list-group-flush border-top flex-grow-1">
+                <LOOP NAME="daily_trnc_panel">
+                <li class="list-group-item kj-kv"><span>{{methodName}}</span><span>{{htmlContent}}</span></li>
+                </LOOP>
+            </ul>
+            <div class="card-footer">
+                <a href="{viewtoday_btn}">{olang.KJP_VIEW_ALL} <i class="fa-solid fa-angle-right kj-flip-rtl" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- the payments of a month or a day -->
+    <div class="col-lg-7">
+        <form method="post" action="{FormActions}" class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-box-archive" aria-hidden="true"></i> {olang.KJP_OPN_ARCHIVE}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <label class="form-label" for="kjpArchiveYear">{lang.W_PERIODS_6}</label>
+                        <select name="archive_year" id="kjpArchiveYear" class="form-select">
+                            <LOOP NAME="years">
+                            <option value="{{value}}">{{value}}</option>
+                            </LOOP>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label" for="kjpArchiveMonth">{lang.W_PERIODS_5}</label>
+                        <select name="archive_month" id="kjpArchiveMonth" class="form-select">
+                            <LOOP NAME="months">
+                            <option value="{{value}}"<IF LOOP="selected"> selected</IF>>{{value}}</option>
+                            </LOOP>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label" for="kjpArchiveDay">{lang.W_PERIODS_3}</label>
+                        <select name="archive_day" id="kjpArchiveDay" class="form-select" aria-describedby="kjpArchiveNote">
+                            <option value=""></option>
+                            <LOOP NAME="days">
+                            <option value="{{value}}">{{value}}</option>
+                            </LOOP>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-text" id="kjpArchiveNote">{olang.KJP_ARCHIVE_NOTE}</div>
+            </div>
+            <div class="card-footer text-end">
+                <button type="submit" name="open_archive" value="1" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-box-open" aria-hidden="true"></i><span>{olang.KJP_ARCH_OPN}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- a payment by its number -->
+    <div class="col-lg-5">
+        <form method="post" action="{FormActions}" class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> {olang.KJP_PAY_OPN}</h2>
+            </div>
+            <div class="card-body">
+                <label class="form-label" for="kjpPaymentNumber">{olang.KJP_PAY_ID}</label>
+                <input type="number" name="payment_number" id="kjpPaymentNumber" class="form-control" dir="ltr" min="1" required>
+            </div>
+            <div class="card-footer text-end">
+                <button type="submit" name="open_payment" value="1" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-eye" aria-hidden="true"></i><span>{olang.KJP_PAY_OPN}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- the buyers did not come back from these payments yet -->
+<div class="card">
+    <div class="card-header kj-card-header">
+        <h2 class="kj-card-title"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> {olang.KJP_PEND_PAY}</h2>
+    </div>
+    <IF NAME="PendPayNum">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 4rem">#</th>
+                    <th scope="col">{olang.KJP_MEMBER}</th>
+                    <th scope="col">{olang.KJP_ACTION}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{lang.IP}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="PendPay">
+                <tr>
+                    <td class="text-body-secondary">{{PayID}}</td>
+                    <td class="fw-semibold">{{PayUser}}</td>
+                    <td>{{PayAction}}</td>
+                    <td>{{PayMethod}}</td>
+                    <td dir="ltr" style="text-align: start">{{PayIP}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{PayDateTime}}</td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_PEND_PAY}</p>
+    </div>
+    </IF>
+</div>
+
+<div class="kj-pager mt-3">{page_nums}</div>

@@ -1,42 +1,54 @@
 <IF NAME="is_style_supported">
-  <h2>{olang.KJP_MY_PAYS}</h2>
-  <hr>
 
-    <IF NAME="havePayments">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">{olang.KJP_PAY_ID}</th>
-            <th scope="col">{olang.KJP_PAY_MTHD}</th>
-            <th scope="col">{olang.KJP_PAY_AMNT}</th>
-            <th scope="col">{olang.KJP_ACTION}</th>
-            <th scope="col">{olang.KJP_DATE_TIME}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <LOOP NAME="payments">
-            <tr>
-            </tr>
-            <th scope="row">{{ID}}</th>
-            <td>{{METHOD}}</td>
-            <td>{{AMOUNT}}</td>
-            <td>{{ACTION}}</td>
-            <td>{{DATE_TIME}}</td>
-            </tr>
-          </LOOP>
-        </tbody>
-      </table>
-      {page_nums}
-      <ELSE>
-        <div class="alert alert-primary" role="alert">
-          {olang.KJP_NO_FL_PMNT}
-        </div>
+<div class="d-flex align-items-center gap-3 mb-4">
+    <span class="icon-box rounded-3 bg-primary-subtle text-primary-emphasis"><i class="fa-solid fa-receipt"></i></span>
+    <div>
+        <h1 class="h3 fw-bold mb-0">{title}</h1>
+    </div>
+</div>
 
-    </IF>
-    <ELSE>
-        <h2>
-        <div style="color: red;">
-          file 'my_payments.html' is not exists in your style .
-        </div>
-        </h2>
-    </IF>
+<IF NAME="havePayments">
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{olang.KJP_ACTION}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payments">
+                <tr>
+                    <th scope="row" class="text-body-secondary fw-normal">{{ID}}</th>
+                    <td class="text-break">{{ACTION}}</td>
+                    <td>{{METHOD}}</td>
+                    <td class="text-nowrap"><bdi>{{AMOUNT}}</bdi></td>
+                    <td class="text-nowrap" dir="ltr">{{DATE_TIME}}</td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="d-flex justify-content-center mt-4" aria-label="pagination">{page_nums}</nav>
+
+<ELSE>
+
+<div class="card shadow-sm text-center">
+    <div class="card-body p-5">
+        <span class="icon-box icon-box-lg rounded-circle bg-body-tertiary text-body-secondary mb-3"><i class="fa-solid fa-receipt"></i></span>
+        <p class="lead text-body-secondary mb-0">{olang.KJP_NO_TRNC}</p>
+    </div>
+</div>
+
+</IF>
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

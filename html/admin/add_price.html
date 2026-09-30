@@ -1,82 +1,65 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
-
-
-<div class="card">
-    <div class="card-header">
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
-    </div>
-    <div class="card-body">
-
-        <IF NAME="show_price_panel">
-
-            <div class="card" style="margin: 100px;margin-top: 10px;">
-                <div class="row no-gutters">
-                    <div class="col-md-4">
-                        <img src="{price_file_image}" class="card-img">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">{olang.KJP_FILE_INFO}</h5>
-                            <p class="card-text">{olang.KJP_FILE_NAME} : {FileName}</p>
-                            <p class="card-text">{olang.KJP_FILE_OWNR} : {FileUser}</p>
-                            <p class="card-text">{olang.KJP_FILE_SZE} : {FileSize}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <form method="POST" action="./?cp=kj_payment_options&smt=pricing_file">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="file_name" value="{FileName}" id="FileName" readonly>
-                </div>
-                <input type="hidden" name="price_file_id" value="{FileID}">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="price_file" value="{FilePrice}">
-                </div>
-
-                <button type="submit" name="set_price" class="btn btn-primary">{olang.KJP_SET_PRC}</button>
-            </form>
-
-
-
-
-
-            <ELSE>
-
-
-                <IF NAME="OpenAlert">
-
-                    <div class="alert alert-{AlertRole}" role="alert">
-                        {AlertMsg}
-                    </div>
-
-                </IF>
-
-
-                <div class="alert alert-info" role="alert">
-                    {olang.KJP_ENT_ID_URL}
-                </div>
-
-                <form class="form-inline" method="POST" action="./?cp=kj_payment_options&smt=pricing_file">
-
-                    <div class="form-group mx-sm-3 mb-2">
-                        <label class="sr-only">ID / URL</label>
-                        <input type="text" class="form-control" id="FileID" name="select_file_id"
-                            placeholder="{olang.KJP_ENT_ID_URL}">
-                    </div>
-
-                    <button type="submit" name="open_file" class="btn btn-primary mb-2">{olang.KJP_OPN_FILE}</button>
-
-                </form>
-
-
-        </IF>
-
-
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_PRC_FILE}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.KJP_PRC_FILE}</h1>
     </div>
 </div>
+
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+
+<IF NAME="OpenAlert">
+<div class="alert alert-{AlertRole} d-flex align-items-start gap-2" role="alert">
+    <i class="fa-solid fa-circle-info kj-alert-icon" aria-hidden="true"></i>
+    <div>{AlertMsg}</div>
+</div>
+</IF>
+
+<IF NAME="show_price_panel">
+
+<form method="post" action="{FormAction}" class="card">
+    <div class="card-header kj-card-header">
+        <h2 class="kj-card-title"><i class="fa-regular fa-file-lines" aria-hidden="true"></i> {olang.KJP_FILE_INFO}</h2>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item kj-kv"><span>{olang.KJP_FILE_NAME}</span><span class="text-break">{FileName}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_FILE_OWNR}</span><span>{FileUser}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_FILE_SZE}</span><span dir="ltr">{FileSize}</span></li>
+    </ul>
+    <div class="card-body border-top">
+        <input type="hidden" name="price_file_id" value="{FileID}">
+        <label class="form-label" for="kjpPrice">{olang.KJP_PRC}</label>
+        <div class="input-group" style="max-width: 20rem">
+            <input type="number" class="form-control" id="kjpPrice" name="price_file" value="{FilePrice}" dir="ltr" min="0" step="0.01" required>
+            <span class="input-group-text">{currency}</span>
+        </div>
+    </div>
+    <div class="card-footer kj-form-actions">
+        <button type="submit" name="set_price" value="1" class="btn btn-primary">
+            <i class="fa-solid fa-tag" aria-hidden="true"></i><span>{olang.KJP_SET_PRC}</span>
+        </button>
+    </div>
+
+    {H_FORM_KEYS}
+</form>
+
+<ELSE>
+
+<form method="post" action="{FormAction}" class="card">
+    <div class="card-body">
+        <label class="form-label" for="kjpFile">{olang.KJP_ENT_ID_URL}</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="kjpFile" name="select_file_id" dir="ltr" required>
+            <button type="submit" name="open_file" value="1" class="btn btn-primary">
+                <i class="fa-regular fa-folder-open" aria-hidden="true"></i><span>{olang.KJP_OPN_FILE}</span>
+            </button>
+        </div>
+    </div>
+</form>
+
+</IF>

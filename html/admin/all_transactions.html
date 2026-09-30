@@ -1,55 +1,58 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_ALL_TRNC}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{all_trnc_page_title}</h1>
+    </div>
+</div>
+
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
 
 <div class="card">
-    <div class="card-header">
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
-    <div class="card-body">
-
-
-        <table class="table table-bordered">
+    <IF NAME="have_transaction">
+    <div class="table-responsive">
+        <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col" style="width: 4rem">#</th>
                     <th scope="col">{olang.KJP_MEMBER}</th>
                     <th scope="col">{olang.KJP_ACTION}</th>
                     <th scope="col">{olang.KJP_PAY_AMNT}</th>
                     <th scope="col">{olang.KJP_PAY_MTHD}</th>
                     <th scope="col">{olang.KJP_DATE_TIME}</th>
-                    <th scope="col">{olang.KJP_VIEW}</th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">{olang.KJP_VIEW}</span></th>
                 </tr>
             </thead>
             <tbody>
-                <IF NAME="have_transaction == true">
-
-                    <LOOP NAME="transactions">
-                        <tr>
-                            <th scope="row">{{PayID}}</th>
-                            <td>{{PayUser}}</td>
-                            <td>{{PayAction}}</td>
-                            <td>{{PayAmount}}</td>
-                            <td>{{PayMethod}}</td>
-                            <td>{{PayDateTime}}</td>
-                            <td><a href="{{view_link}}" class="btn btn-primary">{olang.KJP_VIEW}</a></td>
-                        </tr>
-
-                    </LOOP>
-
-
-
-                    <ELSE>
-
-                        <div class="alert alert-info" role="alert">
-                            {olang.KJP_NO_TRNC}
-                        </div>
-
-                </IF>
+                <LOOP NAME="transactions">
+                <tr>
+                    <td class="text-body-secondary">{{PayID}}</td>
+                    <td class="fw-semibold">{{PayUser}}</td>
+                    <td>{{PayAction}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{PayAmount}}</td>
+                    <td>{{PayMethod}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{PayDateTime}}</td>
+                    <td class="text-end">
+                        <a href="{{view_link}}" class="btn btn-sm btn-outline-secondary" title="{olang.KJP_VIEW_PAY}">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i><span class="visually-hidden">{olang.KJP_VIEW_PAY}</span>
+                        </a>
+                    </td>
+                </tr>
+                </LOOP>
             </tbody>
         </table>
-        {page_nums}
     </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-receipt" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_TRNC}</p>
+    </div>
+    </IF>
 </div>
+
+<div class="kj-pager mt-3">{page_nums}</div>

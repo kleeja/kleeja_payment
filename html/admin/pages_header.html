@@ -1,30 +1,13 @@
-<ul class="nav nav-tabs card-header-tabs">
-    <li class="nav-item">
-        <a class="nav-link (current_smt == ?active:)" href="./?cp=kj_payment_options">{lang.HOME}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link (current_smt == all_transactions?active:)" href="./?cp=kj_payment_options&amp;smt=all_transactions">{olang.KJP_ALL_TRNC}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link (current_smt == canceled_payment?active:)" href="./?cp=kj_payment_options&amp;smt=canceled_payment">{olang.KJP_CNCLD_PAY}</a>
-    </li>
+<nav class="nav nav-underline flex-nowrap overflow-auto mb-4" aria-label="{olang.R_KJ_PAYMENT_OPTIONS}">
+    <a class="nav-link text-nowrap<IF NAME="kjp_is_home"> active</IF>" href="./?cp=kj_payment_options">{lang.HOME}</a>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == all_transactions"> active</IF>" href="./?cp=kj_payment_options&amp;smt=all_transactions">{olang.KJP_ALL_TRNC}</a>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == canceled_payment"> active</IF>" href="./?cp=kj_payment_options&amp;smt=canceled_payment">{olang.KJP_CNCLD_PAY}</a>
     <!-- Checking Subscriptions is it active or not-->
     <IF NAME="config.kjp_active_subscriptions">
-            <li class="nav-item">
-                <a class="nav-link (current_smt == subscriptions?active:)" href="./?cp=kj_payment_options&amp;smt=subscriptions">{olang.KJP_SUBSCRIPTIONS}</a>
-            </li>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == subscriptions"> active</IF>" href="./?cp=kj_payment_options&amp;smt=subscriptions">{olang.KJP_SUBSCRIPTIONS}</a>
     </IF>
-    <li class="nav-item">
-        <a class="nav-link (current_smt == payouts?active:)" href="./?cp=kj_payment_options&amp;smt=payouts">{olang.KJP_PAYOUTS}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link (current_smt == pricing_file?active:)" href="./?cp=kj_payment_options&amp;smt=pricing_file">{olang.KJP_PRC_FILE}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link (current_smt == paid_files?active:)" href="./?cp=kj_payment_options&amp;smt=paid_files">{olang.KJP_PAID_FILE}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link (current_smt == help?active:)" href="./?cp=kj_payment_options&amp;smt=help">{olang.KJP_HLP}</a>
-    </li>
-</ul>
-</div>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == payouts"> active</IF>" href="./?cp=kj_payment_options&amp;smt=payouts">{olang.KJP_PAYOUTS}</a>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == pricing_file"> active</IF>" href="./?cp=kj_payment_options&amp;smt=pricing_file">{olang.KJP_PRC_FILE}</a>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == paid_files"> active</IF>" href="./?cp=kj_payment_options&amp;smt=paid_files">{olang.KJP_PAID_FILE}</a>
+    <a class="nav-link text-nowrap<IF NAME="current_smt == help"> active</IF>" href="./?cp=kj_payment_options&amp;smt=help">{olang.KJP_HLP}</a>
+</nav>

@@ -1,99 +1,104 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Archive ( {archive_date} )</li>
-    </ol>
-</nav>
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_ARC_PAYS}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.KJP_ARC_PAYS} <span class="text-body-secondary" dir="ltr">{archive_date}</span></h1>
+    </div>
+</div>
+
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+
+<div class="row g-3 mb-4">
+    <LOOP NAME="archiveTables">
+    {{html}}
+    </LOOP>
+</div>
+
+<h2 class="kj-section-title">{olang.KJP_ARC_PAYS}</h2>
+
 <div class="card">
-    <div class="card-body">
-
-        <div class="row">
-            <LOOP NAME="archiveTables">
-                {{html}}
-            </LOOP>
-        </div>
-
-        <hr class="my-4">
-
-        <h5 class="mb-3">{olang.KJP_ARC_PAYS}</h5>
-        <table class="table table-bordered">
+    <IF NAME="ArchivePayNum">
+    <div class="table-responsive">
+        <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col" style="width: 4rem">#</th>
                     <th scope="col">{olang.KJP_MEMBER}</th>
                     <th scope="col">{olang.KJP_ACTION}</th>
-                    <th scope="col">IP</th>
+                    <th scope="col">{lang.IP}</th>
                     <th scope="col">{olang.KJP_DATE_TIME}</th>
-                    <th scope="col">{olang.KJP_VIEW}</th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">{olang.KJP_VIEW}</span></th>
                 </tr>
             </thead>
             <tbody>
-                <IF NAME="ArchivePayNum">
-
-                    <LOOP NAME="ArchivePay">
-                        <tr>
-                            <th scope="row">{{PayID}}</th>
-                            <td>{{PayUser}}</td>
-                            <td>{{PayAction}}</td>
-                            <td>{{PayIP}}</td>
-                            <td>{{PayDateTime}}</td>
-                            <td><a href="{{view_link}}" class="btn btn-primary">{olang.KJP_VIEW}</a></td>
-                        </tr>
-
-                    </LOOP>
-
-                    <ELSE>
-
-                        <tr role="alert">
-                           <td class="alert alert-info" colspan="6">{olang.KJP_NO_PAY_ARCH}</td>
-                        </tr>
-
-                </IF>
-
-
+                <LOOP NAME="ArchivePay">
+                <tr>
+                    <td class="text-body-secondary">{{PayID}}</td>
+                    <td class="fw-semibold">{{PayUser}}</td>
+                    <td>{{PayAction}}</td>
+                    <td dir="ltr" style="text-align: start">{{PayIP}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{PayDateTime}}</td>
+                    <td class="text-end">
+                        <a href="{{view_link}}" class="btn btn-sm btn-outline-secondary" title="{olang.KJP_VIEW_PAY}">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i><span class="visually-hidden">{olang.KJP_VIEW_PAY}</span>
+                        </a>
+                    </td>
+                </tr>
+                </LOOP>
             </tbody>
         </table>
-
-        {page_nums}
-
-        <hr class="my-4">
-
-        <h5 class="mb-3">{olang.KJP_POUT_ARCH}</h5>
-
-        <IF NAME="havePayout">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">{olang.KJP_POUT_ID}</th>
-                        <th scope="col">{olang.KJP_MEMBER}</th>
-                        <th scope="col">{olang.KJP_PAY_MTHD}</th>
-                        <th scope="col">{olang.KJP_PAY_AMNT}</th>
-                        <th scope="col">{olang.KJP_DATE_TIME}</th>
-                        <th scope="col">{olang.KJP_POUT_ST}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <LOOP NAME="payouts">
-                        <tr>
-                            <th scope="row">{{ID}}</th>
-                            <th scope="row">{{PayoutUser}}</th>
-                            <td>{{METHOD}}</td>
-                            <td>{{AMOUNT}}</td>
-                            <td>{{DATE_TIME}}</td>
-                            <td>{{STATE}}</td>
-                        </tr>
-                    </LOOP>
-                </tbody>
-            </table>
-            {page_numsPO}
-            <ELSE>
-                <div class="alert alert-primary" role="alert">
-                    {olang.KJP_NO_POUT_YET}
-                </div>
-
-        </IF>
-
-        {page_nums}
     </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-receipt" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_PAY_ARCH}</p>
+    </div>
+    </IF>
 </div>
+
+<div class="kj-pager mt-3">{page_nums}</div>
+
+<h2 class="kj-section-title">{olang.KJP_POUT_ARCH}</h2>
+
+<div class="card">
+    <IF NAME="havePayout">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 4rem">#</th>
+                    <th scope="col">{olang.KJP_MEMBER}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col">{olang.KJP_POUT_ST}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payouts">
+                <tr>
+                    <td class="text-body-secondary">{{ID}}</td>
+                    <td class="fw-semibold">{{PayoutUser}}</td>
+                    <td>{{METHOD}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{AMOUNT}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{DATE_TIME}}</td>
+                    <td><span class="kj-badge is-neutral">{{STATE}}</span></td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_POUT_YET}</p>
+    </div>
+    </IF>
+</div>
+
+<div class="kj-pager mt-3">{page_numsPO}</div>

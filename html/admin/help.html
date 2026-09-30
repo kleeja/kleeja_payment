@@ -1,308 +1,324 @@
-	<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
-<div class="card">
-    <div class="card-header">
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_HLP}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">Quick Start Guide</h1>
+        <!-- the guide is written in English, its texts keep their direction in a right to left panel -->
     </div>
+</div>
 
-    <div class="card-body">
-        <h4 class="card-title mb-4">Quick Start Guide</h4>
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
 
-        <div class="accordion" id="accordionHelpList">
+<div class="accordion" id="kjpHelp">
 
-            <div class="card mb-1">
-                <div class="card-header" id="__KJ_PP_INFO">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#KJ_PP_INFO"
-                            aria-expanded="true" aria-controls="KJ_PP_INFO">
-                            What can i do with this plugin?
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="KJ_PP_INFO" class="collapse" aria-labelledby="__KJ_PP_INFO" data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        With this plugin you can pricing the files and groups to selling it , and recive the payments to
-                        your paypal or Stripe account automaticly , or you can make subscription system to offer your files with limited time only
-                    </div>
-                </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpAbout" aria-expanded="true" aria-controls="kjpHelpAbout">
+                <span dir="ltr">What can i do with this plugin?</span>
+            </button>
+        </h2>
+        <div id="kjpHelpAbout" class="accordion-collapse collapse show" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                With this plugin you can price the files and the groups to sell them, and receive the payments to
+                your PayPal or Stripe account automatically, or you can make a subscription system to offer your
+                files for a limited time only.
             </div>
-
-            <div class="card mb-1">
-                <div class="card-header" id="accordionHelpList">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                            data-target="#WHAT_I_NEED" aria-expanded="false" aria-controls="WHAT_I_NEED">
-                            What i need to use this plugin?
-                        </button>
-                    </h2>
-                </div>
-                <div id="WHAT_I_NEED" class="collapse" aria-labelledby="__WHAT_I_NEED" data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        You need only : PayPal Business Account or Stripe account, and you can create an
-                        <a target="_blank" href="https://developer.paypal.com/developer/applications/">REST API APP for
-                            PayPal</a> or
-                        <a target="_blank" href="https://dashboard.stripe.com/account/apikeys">get Stripe API keys </a>
-                        # for developers : you can create a PayPal app if your account is personal
-                        , but you will use the sandbox API (TEST) until you upgrade your account to business
-                        and for Stripe you will use the test api keys until you active your account
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="card  mb-1">
-                <div class="card-header" id="_SETTING_INFO">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                            data-target="#SETTING_INFO" aria-expanded="false" aria-controls="SETTING_INFO">
-                            Settings Information
-                        </button>
-                    </h2>
-                </div>
-                <div id="SETTING_INFO" class="collapse" aria-labelledby="_SETTING_INFO"
-                    data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        After you create your REST API APP you will got ( Client ID ) and ( Client Secret ) .
-                        set them in <a
-                            href="{config.siteurl}admin/index.php?cp=options&smt=general&smt=kleeja_payment">{olang.CONFIG_KLJ_MENUS_KLEEJA_PAYMENT}</a>
-
-                        , and the ( Currency Code ) it have to be 3 Letter Only EX: USD , EUR , CHF <a target="_blank"
-                            href="https://developer.paypal.com/docs/api/reference/currency-codes/">check the accepted
-                            currencies code here</a>
-
-                        <br>
-                        <hr>
-                        Min Withdrawal Limit (Groups Data) :
-                        it's the Minimal amount that the user can request for withdrawing , if it's (0) , that mean the user can request any amount he want, this is not important in default groups and default registration group
-                        <br>
-                        <hr>
-                        Download Link Expire After x Days ( 0 ) available forever : <br>
-                        after the user make a payment , he will receive an e-mail with download link , and he can not
-                        download the bought file if he did not
-                        have an cookie in his browser , so this will help you to set the limit of days that he can
-                        access to the file.
-                        <br>
-                        note : if you give the access to user to access bought files page, the cookies time is not
-                        important , because the user will have unlimit accecc time .
-                        <br>
-                        <hr>
-                        Percentage of owner's earnings (10 -> 90) % :
-                        <br>
-                        this is the Percentage of the File owner , if a user upload a file and he want to sell it ,
-                        and another person want to buy this file , he will receive a selected Percentage from the file
-                        price ,
-                        <br> note : he will receive the Percentage only if the group of the user have the access to
-                        "Receive Profits" ,
-                        it's not important if the group don't have the permissions
-                        <br>
-                        <hr>
-                        Min/Max Price Limit : <br>
-                        when the group of the user have the access to "Receive Profits" permissions , he can set the
-                        price of his files ,
-                        <br> with this two option you can set the limit of the file price that the user can set it .
-                        <br> note : this options will be applied with user area only , not in the admin page
-
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="card mb-1">
-                <div class="card-header" id="_PRC_FILE_GROUP">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#PRC_FILE_GROUP"
-                            aria-expanded="true" aria-controls="PRC_FILE_GROUP">
-                            Pricing Files and Groups
-                        </button>
-                    </h2>
-                </div>
-                <div id="PRC_FILE_GROUP" class="collapse" aria-labelledby="_PRC_FILE_GROUP"
-                    data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        To pricing a file you need to go to ( <a
-                            href="{config.siteurl}admin/index.php?cp=kj_payment_options&smt=pricing_file">Pricing a
-                            File </a> ) in the Side menu , with the file id or file link you
-                        can open file details , after clicking file details you will see some details about the file and
-                        at the end you will see a form to set the price , and if the file was paid , you can change the
-                        price or set the price to 0 (zero) to make the file for free again
-                        <hr>
-                        and if you want to set a price for a group go to ( users & Groups -> Edit Data ) and you will
-                        find ( Join price ) .
-                        <hr>
-                        Note : the default groups and the default registration group can not be paid
-
-
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="card mb-1">
-                <div class="card-header" id="WHO_CAN_DOWN">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#_WHO_CAN_DOWN"
-                            aria-expanded="true" aria-controls="_WHO_CAN_DOWN">
-                            Who can download the paid file for free ?
-                        </button>
-                    </h2>
-                </div>
-                <div id="_WHO_CAN_DOWN" class="collapse" aria-labelledby="WHO_CAN_DOWN"
-                    data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        File Owner and website founders can download the file for free , and if the subscription is active , then any member have a avalid
-                        subscription can access all files in the center , and the owner of the paid files will have some point ( Founder Role is not admins
-                        group , the founders can give founder Role to any member in kleeja even if he is not in admins
-                        group )
-
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="card mb-1">
-                <div class="card-header" id="CP_INFO">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#_CP_INFO"
-                            aria-expanded="true" aria-controls="_CP_INFO">
-                            KJ_Payments Control Panel & Archives (CP)
-                        </button>
-                    </h2>
-                </div>
-                <div id="_CP_INFO" class="collapse" aria-labelledby="CP_INFO" data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        After you open kj_payments CP you can find some information about payments ( Transactions
-                        numbers and amounts , and Net Profits )
-                        <hr>
-                        all transactions : is the number of all approved payments when you started using this plugin ,
-                        <hr>
-                        monthly transactions : is the number of all payments of this month with the net profits and it
-                        will be reset every month
-                        <hr>
-                        daily transactions : is the number of all payments of today only and it will be reset everyday
-                        <hr>
-                        you can access to the old payments and amounts for any day or month by archives . (to access to
-                        monthly archive , make the day empty and select the month and year )
-                        <hr>
-                        Only the website founders can access to kj_payments control Panel
-                        <hr>
-                        Note : if you see that a method display the number of amount without writing ( Net Profit ) that
-                        mean the amount is written with fees
-                        <hr>
-                        The Files/Images URLs have to be from ( Row ID DataBase ) . <a
-                            href="{config.siteurl}admin/index.php?cp=options&smt=advanced&smt=upload">Check Here</a>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-1">
-                <div class="card-header" id="_INFO_1_">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#_INFO_1"
-                            aria-expanded="true" aria-controls="_INFO_1">
-                            Payouts
-                        </button>
-                    </h2>
-                </div>
-                <div id="_INFO_1" class="collapse" aria-labelledby="_INFO_1_" data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        when you give "share_profit" permission to any group , they will have access to "Payments
-                        Control" Page ,
-                        and also , they will have permission to pricing their files in selected limits .
-                        <br>
-                        and it will be able for them to receive the selected Percentage of the file price .
-                        <br>
-                        and they can ask to withdraw their balance to their paypal account . <br>
-                        <hr>
-                        if a user request to withdraw an amount from hes account ; <br>
-                        you will see it in payouts request list , and you will see also 'check' button , <br>
-                        if you canceled the payout , the amount will back to the user balance , and done <br>
-                        and if you accepted it , the balance will be sent to paypal user email , ( the email that the
-                        user registered it in kleeja ) <br>
-                        after that the payout state will be 'SENT' , that mean we said to paypal to sent the amount to
-                        the user , but the payout is not confirmed yet <br>
-                        any payout with state 'SENT' , when you view it , you see in the footer to check the payout , is
-                        it received or not yet , <br>
-                        note : most of the time the payout take 1 min to confirm it , if it took more then 1 min , check
-                        user email , is it regestered in paypal or not <br>
-                        if the email is not registered , the money will back to your account after 30 days . <br>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-1">
-                <div class="card-header" id="_subs">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#subs"
-                            aria-expanded="true" aria-controls="subs">
-                            Subscription system
-                        </button>
-                    </h2>
-                </div>
-                <div id="subs" class="collapse" aria-labelledby="_subs" data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        Subscription system is based in this plugin , you can use it alone or you can use it with <strong>kleeja payment</strong>
-                        plugin <br>
-                        <h4>@features</h4>
-                        <ul>
-                            <li>
-                                offering all files in the center for limited time
-                            </li>
-                            <li>
-                                the user need to renew hes subscription if he want to access new files again
-                            </li>
-                        </ul>
-                        * note : you can use this plugin with selling files <strong>and/or</strong> subscrption system , so it's an optional for you to choose how to use this plugin
-                    </div>
-                </div>
-            </div>
-
-            <LOOP NAME="KJP_HELP">
-                <div class="card mb-1">
-                    <div class="card-header" id="{{ID}}_1">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{ID}}_2"
-                                aria-expanded="true" aria-controls="{{ID}}_2">
-                                {{TITLE}}
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="{{ID}}_2" class="collapse" aria-labelledby="{{ID}}_1" data-parent="#accordionHelpList">
-                        <div class="card-body">
-                           {{CONTENT}}
-                        </div>
-                    </div>
-                </div>
-            </LOOP>
-
-            <div class="card mb-1">
-                <div class="card-header" id="_INFO_2_">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#_INFO_2"
-                            aria-expanded="true" aria-controls="_INFO_2">
-                            More Help?
-                        </button>
-                    </h2>
-                </div>
-                <div id="_INFO_2" class="collapse" aria-labelledby="_INFO_2_" data-parent="#accordionHelpList">
-                    <div class="card-body">
-                        check our discord channel , we will be happy to help you . <a target="_blank"
-                            href="https://discord.gg/A2wpXfG">https://discord.gg/A2wpXfG</a> <br>
-                            or check the source code of this plugin by visiting 
-                            <a href="https://github.com/kleeja-official/kleeja_payment" target="_blank">kleeja payment on github</a>
-                    </div>
-                </div>
-            </div>
-
-
         </div>
     </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpNeed" aria-expanded="false" aria-controls="kjpHelpNeed">
+                <span dir="ltr">What i need to use this plugin?</span>
+            </button>
+        </h2>
+        <div id="kjpHelpNeed" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    You need only a PayPal Business account, or a Stripe account, or both.
+                </p>
+                <ul>
+                    <li>
+                        For PayPal, create a
+                        <a target="_blank" rel="noopener" href="https://developer.paypal.com/dashboard/applications">REST API app</a>
+                        and copy its Client ID and its Secret. Every app has two pairs of them, one for the sandbox
+                        and one for the live payments.
+                    </li>
+                    <li>
+                        For Stripe, copy the Secret key from the
+                        <a target="_blank" rel="noopener" href="https://dashboard.stripe.com/apikeys">API keys page</a>.
+                        A key that starts with <code>sk_test_</code> is for testing, and the one that starts with
+                        <code>sk_live_</code> takes real payments.
+                    </li>
+                </ul>
+                <p class="mb-0">
+                    For developers : you can test everything without real money, with the sandbox of PayPal and
+                    the test key of Stripe.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpSettings" aria-expanded="false" aria-controls="kjpHelpSettings">
+                <span dir="ltr">Settings Information</span>
+            </button>
+        </h2>
+        <div id="kjpHelpSettings" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    Set the keys in <a href="{settings_link}">{olang.CONFIG_KLJ_MENUS_KLEEJA_PAYMENT}</a>,
+                    and turn the payment methods on or off in
+                    <a href="{methods_link}">{olang.CONFIG_KLJ_MENUS_KJ_PAY_ACTIVE_MTHD}</a>.
+                    A method is offered to the buyers only when it is on and its keys are set.
+                </p>
+                <p>
+                    The Currency Code has to be 3 letters only, like USD , EUR , CHF , and the payment method has
+                    to support it. Check the currencies of
+                    <a target="_blank" rel="noopener" href="https://developer.paypal.com/docs/reports/reference/paypal-supported-currencies/">PayPal</a>
+                    and of <a target="_blank" rel="noopener" href="https://docs.stripe.com/currencies">Stripe</a>.
+                </p>
+                <hr>
+                <p>
+                    <strong>Live Mode</strong> : it is about PayPal, when it is off the Client ID and the Secret
+                    of the sandbox are used. Stripe follows the key that you set.
+                </p>
+                <hr>
+                <p>
+                    <strong>Min Withdrawal Limit (Groups Data)</strong> :
+                    it's the minimal amount that a user of the group can request for withdrawing, if it's 0 that
+                    means the user can request any amount he wants.
+                </p>
+                <hr>
+                <p>
+                    <strong>Download Link Expire After x Days</strong>, 0 is available forever : <br>
+                    after the user makes a payment, he will receive an e-mail with the download link, and he can not
+                    download the bought file without the cookie of the browser that he paid with, so this sets
+                    the number of the days that he can access the file.
+                    <br>
+                    note : the members of the groups that can access the purchases page keep their files,
+                    the days do not count for them.
+                </p>
+                <hr>
+                <p>
+                    <strong>Percentage of owner's earnings</strong> :
+                    if a user uploads a file and sells it, he receives this percentage from the file price
+                    with every payment.
+                    <br> note : he receives it only if his group has the "Receive Profits" permission.
+                </p>
+                <hr>
+                <p class="mb-0">
+                    <strong>Min/Max Price Limit</strong> : <br>
+                    the users of the groups that have the "Receive Profits" permission can set the price of
+                    their files, and these two options are the limits of the price that they can set.
+                    <br> note : these options are for the users area only, not for this control panel.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpFlow" aria-expanded="false" aria-controls="kjpHelpFlow">
+                <span dir="ltr">How does a payment work?</span>
+            </button>
+        </h2>
+        <div id="kjpHelpFlow" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    The buyer chooses a payment method and goes to the page of PayPal or Stripe, the card and the
+                    account details are typed there only, they never pass through your website.
+                </p>
+                <ul>
+                    <li>
+                        <strong>PayPal</strong> : the buyer approves the payment on PayPal, and the money is taken
+                        when he comes back to your website. If he does not come back, nothing is taken from him.
+                    </li>
+                    <li>
+                        <strong>Stripe</strong> : the buyer pays with his card on the payment page of Stripe, and
+                        when he comes back your website asks Stripe if the payment is paid.
+                    </li>
+                    <li>
+                        <strong>Balance</strong> : the members who receive profits can pay with their balance.
+                    </li>
+                </ul>
+                <p class="mb-0">
+                    A payment stays in the pending payments until its buyer comes back. If a buyer says that
+                    he paid and the payment is still pending, check it in your PayPal or Stripe account.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpPricing" aria-expanded="false" aria-controls="kjpHelpPricing">
+                <span dir="ltr">Pricing Files and Groups</span>
+            </button>
+        </h2>
+        <div id="kjpHelpPricing" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    To price a file go to
+                    <a href="./?cp=kj_payment_options&amp;smt=pricing_file">{olang.KJP_PRC_FILE}</a>,
+                    with the file id or the file link you can open the file details, and under them there is a
+                    form to set the price. If the file was paid, you can change the price or set it to 0 to make
+                    the file free again.
+                </p>
+                <hr>
+                <p>
+                    To set a price for a group go to the groups page, open Edit Data of the group, and you will
+                    find the Join price.
+                </p>
+                <hr>
+                <p class="mb-0">
+                    Note : the default groups and the default registration group can not be paid.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpFree" aria-expanded="false" aria-controls="kjpHelpFree">
+                <span dir="ltr">Who can download the paid file for free ?</span>
+            </button>
+        </h2>
+        <div id="kjpHelpFree" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                The file owner and the website founders can download the file for free, and if the subscriptions
+                are active, then any member who has a valid subscription can access all the files, and the owners
+                of the paid files get points. The founder role is not the admins group, the founders can give
+                the founder role to any member even if he is not in the admins group.
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpPanel" aria-expanded="false" aria-controls="kjpHelpPanel">
+                <span dir="ltr">Payments Control Panel &amp; Archives</span>
+            </button>
+        </h2>
+        <div id="kjpHelpPanel" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    The first page has the numbers and the amounts of the approved payments.
+                </p>
+                <ul>
+                    <li>all transactions : all the approved payments since you started using this plugin.</li>
+                    <li>monthly transactions : the payments of this month, it starts again every month.</li>
+                    <li>daily transactions : the payments of today only.</li>
+                </ul>
+                <p>
+                    You can see the payments and the amounts of any day or month in the archives. For a monthly
+                    archive keep the day empty and select the month and the year.
+                </p>
+                <p>
+                    Only the website founders can access this control panel.
+                </p>
+                <p>
+                    Note : the amount of PayPal is the net profit, without its fees. The amounts of the other
+                    methods are written with the fees.
+                </p>
+                <p class="mb-0">
+                    The links of the files and the images have to be made with the id of the database row, a
+                    direct link opens the file without a payment.
+                    <a href="./?cp=options&amp;smt=upload">Check Here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpPayouts" aria-expanded="false" aria-controls="kjpHelpPayouts">
+                <span dir="ltr">Payouts</span>
+            </button>
+        </h2>
+        <div id="kjpHelpPayouts" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    When you give the "Receive Profits" permission to a group, its users get the "Payments Control"
+                    page, they can price their files in the limits that you set, they receive the percentage of
+                    the file price, and they can ask to withdraw their balance to their PayPal account.
+                </p>
+                <hr>
+                <p>
+                    When a user requests to withdraw an amount, you will see it in the requests list of the payouts.
+                    <br>
+                    If you cancel the payout, the amount goes back to the user balance.
+                    <br>
+                    If you send it, the amount is sent with PayPal to the e-mail address that the user has in
+                    your website, and the payout state becomes 'Sent'. When you view a payout with this state
+                    you can check it, to know if it is received.
+                    <br>
+                    If PayPal could not deliver it, the check cancels the payout and the amount goes back to the
+                    user balance.
+                </p>
+                <p class="mb-0">
+                    Note : the payouts have to be enabled for your PayPal account, you can ask PayPal for them
+                    from your account. If the e-mail address of the user has no PayPal account, the money comes
+                    back to your account after 30 days.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpSubs" aria-expanded="false" aria-controls="kjpHelpSubs">
+                <span dir="ltr">Subscription system</span>
+            </button>
+        </h2>
+        <div id="kjpHelpSubs" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                <p>
+                    With the subscriptions you offer all the files for a limited time, and the user needs to
+                    renew his subscription if he wants to access the files again.
+                </p>
+                <p class="mb-0">
+                    Note : you can use this plugin with selling files, with the subscriptions, or with both.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <LOOP NAME="KJP_HELP">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelp_{{ID}}" aria-expanded="false" aria-controls="kjpHelp_{{ID}}">
+                {{TITLE}}
+            </button>
+        </h2>
+        <div id="kjpHelp_{{ID}}" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body">
+                {{CONTENT}}
+            </div>
+        </div>
+    </div>
+    </LOOP>
+
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kjpHelpMore" aria-expanded="false" aria-controls="kjpHelpMore">
+                <span dir="ltr">More Help?</span>
+            </button>
+        </h2>
+        <div id="kjpHelpMore" class="accordion-collapse collapse" data-bs-parent="#kjpHelp">
+            <div class="accordion-body" dir="ltr">
+                check our discord channel , we will be happy to help you .
+                <a target="_blank" rel="noopener" href="https://discord.gg/A2wpXfG">https://discord.gg/A2wpXfG</a> <br>
+                or check the source code of this plugin by visiting
+                <a href="https://github.com/kleeja/kleeja_payment" target="_blank" rel="noopener">kleeja payment on github</a>
+            </div>
+        </div>
+    </div>
+
+</div>

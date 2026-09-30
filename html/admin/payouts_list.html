@@ -1,169 +1,96 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
-<div class="card">
-    <div class="card-header">
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_PAYOUTS}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.KJP_PAYOUTS}</h1>
     </div>
-    <div class="card-body">
-        <ul class="nav nav-pills mb-3">
-            <!--  <li class="nav-item">
-        <a class="nav-link (case == payouts?active:)" href="{action}">Payouts</a>
-    </li> -->
-            <li class="nav-item">
-                <a class="nav-link (case == list?active:)" href="{action}&amp;case=list">{olang.KJP_REQ_LIST}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link (case == accepted?active:)"
-                    href="{action}&amp;case=accepted">{olang.KJP_ACCEPTED}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link (case == canceled?active:)"
-                    href="{action}&amp;case=canceled">{olang.KJP_CANCELED}</a>
-            </li>
-        </ul>
-        <hr>
-        <IF NAME="case == payouts">
-            <ELSEIF NAME="case == list">
-                <IF NAME="havePayout">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">{olang.KJP_POUT_ID}</th>
-                                <th scope="col">{olang.KJP_MEMBER}</th>
-                                <th scope="col">{olang.KJP_PAY_MTHD}</th>
-                                <th scope="col">{olang.KJP_PAY_AMNT}</th>
-                                <th scope="col">{olang.KJP_DATE_TIME}</th>
-                                <th scope="col">{olang.KJP_POUT_ST}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <LOOP NAME="payouts">
-                                <tr>
-                                    <th scope="row">{{ID}}</th>
-                                    <th scope="row">{{USER}}</th>
-                                    <td>{{METHOD}}</td>
-                                    <td>{{AMOUNT}}</td>
-                                    <td>{{DATE_TIME}}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info" data-toggle="modal"
-                                            data-target="#exampleModal{{ID}}">
-                                            Check
-                                        </button>
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal{{ID}}" tabindex="-1" role="dialog"
-                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">{olang.KJP_PAYOUTS} {{ID}}
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <h3>{{MDL_MSG}}
-                                                        </h3>
-                                                        <form action="{FormAction}" method="POST">
-                                                            <input type="hidden" name="payoutID" value="{{ID}}">
-                                                            <hr>
-                                                            <button type="submit" name="sendPayout"
-                                                                class="btn btn-success">{olang.KJP_SND_POUT}</button>
-                                                            <button type="submit" name="cancelPayout"
-                                                                class="btn btn-danger">{olang.KJP_CNCL_POUT}</button>
-                                                        </form>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </LOOP>
-                        </tbody>
-                    </table>
-                    {page_nums}
-                    <ELSE>
-                        <div class="alert alert-primary" role="alert">
-                            {no_payout_msg}
-                        </div>
-                </IF>
-                <!-- End Payout List -->
-                <ELSEIF NAME="case == accepted">
-                    <IF NAME="havePayout">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">{olang.KJP_POUT_ID}</th>
-                                    <th scope="col">{olang.KJP_MEMBER}</th>
-                                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
-                                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
-                                    <th scope="col">{olang.KJP_DATE_TIME}</th>
-                                    <th scope="col">{olang.KJP_POUT_ST}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <LOOP NAME="payouts">
-                                    <tr>
-                                        <th scope="row">{{ID}}</th>
-                                        <th scope="row">{{USER}}</th>
-                                        <td>{{METHOD}}</td>
-                                        <td>{{AMOUNT}}</td>
-                                        <td>{{DATE_TIME}}</td>
-                                        <td> <a href="{{VIEW_LINK}}" class="btn btn-primary">VIEW</a> </td>
-                                    </tr>
-                                </LOOP>
-                            </tbody>
-                        </table>
-                        {page_nums}
-                        <ELSE>
-                            <div class="alert alert-primary" role="alert">
-                                {no_acc_payout_msg}
-                            </div>
-                    </IF>
-                    <!--
-                              End Accepted payout
-                    -->
-                    <ELSEIF NAME="case == canceled">
-                        <IF NAME="havePayout">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">{olang.KJP_POUT_ID}</th>
-                                        <th scope="col">{olang.KJP_MEMBER}</th>
-                                        <th scope="col">{olang.KJP_PAY_MTHD}</th>
-                                        <th scope="col">{olang.KJP_PAY_AMNT}</th>
-                                        <th scope="col">{olang.KJP_DATE_TIME}</th>
-                                        <th scope="col">{olang.KJP_POUT_ST}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <LOOP NAME="payouts">
-                                        <tr>
-                                            <th scope="row">{{ID}}</th>
-                                            <th scope="row">{{USER}}</th>
-                                            <td>{{METHOD}}</td>
-                                            <td>{{AMOUNT}}</td>
-                                            <td>{{DATE_TIME}}</td>
-                                            <td> <a href="{{VIEW_LINK}}" class="btn btn-primary">VIEW</a> </td>
-                                        </tr>
-                                    </LOOP>
-                                </tbody>
-                            </table>
-                            {page_nums}
-                            <ELSE>
-                                <div class="alert alert-primary" role="alert">
-                                    {no_cncl_payout_msg}
-                                </div>
-                        </IF>
-                        <!--
-                                  End canceled payout
-                                -->
-        </IF>
+    <div class="kj-page-actions">
+        <div class="btn-group btn-group-sm" role="group" aria-label="{olang.KJP_PAYOUTS}">
+            <a class="btn btn-outline-secondary<IF NAME="case == list"> active</IF>" href="{action}&amp;case=list">{olang.KJP_REQ_LIST}</a>
+            <a class="btn btn-outline-secondary<IF NAME="case == accepted"> active</IF>" href="{action}&amp;case=accepted">{olang.KJP_ACCEPTED}</a>
+            <a class="btn btn-outline-secondary<IF NAME="case == canceled"> active</IF>" href="{action}&amp;case=canceled">{olang.KJP_CANCELED}</a>
+        </div>
     </div>
 </div>
+
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+
+<div class="card">
+    <IF NAME="havePayout">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 4rem">#</th>
+                    <th scope="col">{olang.KJP_MEMBER}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col">{olang.KJP_POUT_ST}</th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">{olang.KJP_VIEW}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payouts">
+                <tr>
+                    <td class="text-body-secondary">{{ID}}</td>
+                    <td class="fw-semibold">{{USER}}</td>
+                    <td>{{METHOD}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{AMOUNT}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{DATE_TIME}}</td>
+                    <td><span class="kj-badge is-neutral">{{STATE}}</span></td>
+                    <td class="text-end">
+                        <IF NAME="case == list">
+                        <button type="button" class="btn btn-sm btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#kjpPayout{{ID}}">
+                            <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i><span>{olang.KJP_VIEW}</span>
+                        </button>
+                        <ELSE>
+                        <a href="{{VIEW_LINK}}" class="btn btn-sm btn-outline-secondary" title="{olang.KJP_VIEW}">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i><span class="visually-hidden">{olang.KJP_VIEW}</span>
+                        </a>
+                        </IF>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{no_payout_msg}</p>
+    </div>
+    </IF>
+</div>
+
+<div class="kj-pager mt-3">{page_nums}</div>
+
+<IF NAME="case == list">
+<!-- send the money of a request or cancel it -->
+<LOOP NAME="payouts">
+<div class="modal fade" id="kjpPayout{{ID}}" tabindex="-1" aria-labelledby="kjpPayoutLabel{{ID}}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="{FormAction}" class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="kjpPayoutLabel{{ID}}">{olang.KJP_PAYOUTS} <span dir="ltr">#{{ID}}</span></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{lang.CLOSE}"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">{{MDL_MSG}}</p>
+                <input type="hidden" name="payoutID" value="{{ID}}">
+                {H_FORM_KEYS}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" name="cancelPayout" value="1" class="btn btn-outline-danger">{olang.KJP_CNCL_POUT}</button>
+                <button type="submit" name="sendPayout" value="1" class="btn btn-success">{olang.KJP_SND_POUT}</button>
+            </div>
+        </form>
+    </div>
+</div>
+</LOOP>
+</IF>

@@ -1,44 +1,51 @@
 <IF NAME="is_style_supported">
-        <table class="table col-md-6">
-                <thead>
-                  <tr>
-              
-                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_NAME}</th>
-                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_TIME}</th>
-                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_PRICE}</th>
-                    <th scope="col">{olang.KJP_GRP_JOIN_LNK}</th>
-              
-                  </tr>
-                </thead>
-                <tbody>
-              <LOOP NAME="subscripe_list">
-              
-                  <tr>
-                    <td> {{name}} </td>
-                    <td> {{days}}</td>
-                    <td> {{price}} {config.kjp_iso_currency_code}</td>
-                    <td>
-              
-              <form class="form-inline" action="{FormAction}" method="POST" style="margin-right: 120px;">
-              <select class="custom-select" name="Pay_method">
-              
-              {MethodOption}
-              
-              </select>
-              
-              <input type="hidden" name="subscripe_id" value="{{id}}">
-              {form_key}
-                
-                <button type="submit" class="btn btn-primary mb-2" name="subscripe_now" style="margin-right: 20px;">{olang.KJP_SUBSCRIPE}</button>
-              </form>
-              
-                   </td>
-                  </tr>
-              
-              </LOOP>   
-              
-                </tbody>
-              </table>
+
+<div class="d-flex align-items-center gap-3 mb-4">
+    <span class="icon-box rounded-3 bg-primary-subtle text-primary-emphasis"><i class="fa-solid fa-star"></i></span>
+    <div>
+        <h1 class="h3 fw-bold mb-0">{title}</h1>
+    </div>
+</div>
+
+<IF NAME="subscripe_list">
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+    <LOOP NAME="subscripe_list">
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body p-4 d-flex flex-column">
+                <h2 class="h5 fw-semibold mb-3">{{name}}</h2>
+                <div class="fs-3 fw-bold"><bdi>{{price}} {config.kjp_iso_currency_code}</bdi></div>
+                <p class="text-body-secondary mb-4"><i class="fa-regular fa-clock me-1"></i>{olang.KJP_ENTR_SUBSCRIP_TIME}: {{days}}</p>
+
+                <form action="{FormAction}" method="post" class="mt-auto">
+                    {form_key}
+                    <input type="hidden" name="subscripe_id" value="{{id}}">
+                    <label for="kjp-method-{{id}}" class="form-label small text-body-secondary">{olang.KJP_PAY_MTHD}</label>
+                    <div class="input-group">
+                        <select class="form-select" id="kjp-method-{{id}}" name="Pay_method">
+                            {MethodOption}
+                        </select>
+                        <button type="submit" name="subscripe_now" value="1" class="btn btn-primary px-3">{olang.KJP_SUBSCRIPE}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </LOOP>
+</div>
+
 <ELSE>
-<h1 style="color: red;">"kj_payment/subscripe.html" is not exists in your style</h1>
+
+<div class="card shadow-sm text-center">
+    <div class="card-body p-5">
+        <span class="icon-box icon-box-lg rounded-circle bg-body-tertiary text-body-secondary mb-3"><i class="fa-solid fa-star"></i></span>
+        <p class="lead text-body-secondary mb-0">{olang.KJP_NO_SUBSCRIP_FOUND}</p>
+    </div>
+</div>
+
+</IF>
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
 </IF>

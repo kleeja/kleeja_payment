@@ -7,50 +7,100 @@ if (! defined('IN_PLUGINS_SYSTEM')) {
 
 class Subscription
 {
-    private $users         = [];
-    private $subscriptions = [];
+    //the users that were asked about, by their ids
+    private $users = [];
+    //the packages, loaded when they are needed
+    private $subscriptions = null;
 
-    public function __construct()
+    private function active(): bool
     {
-        global $SQL , $dbprefix , $config;
+        global $config;
 
-        if (! $config['kjp_active_subscriptions']) {
-            return;
+        return ! empty($config['kjp_active_subscriptions']);
+    }
+
+    private function packages(): array
+    {
+        global $SQL, $dbprefix;
+
+        if ($this->subscriptions === null) {
+            $this->subscriptions = [];
+
+            if ($this->active()) {
+                $result = $SQL->build(['SELECT' => '*', 'FROM' => "{$dbprefix}subscriptions"]);
+
+                while ($sub = $SQL->fetch($result)) {
+                    $this->subscriptions[$sub['id']] = $sub;
+                }
+
+                $SQL->freeresult($result);
+            }
         }
 
-        $result = $SQL->query("SELECT u.id , u.name , u.package , u.package_expire , u.group_id FROM {$dbprefix}users u");
-        while ($user = $SQL->fetch($result)) {
-            $this->users[$user['id']] = $user;
+        return $this->subscriptions;
+    }
+
+    private function user($user_id)
+    {
+        global $SQL, $dbprefix;
+
+        $user_id = (int) $user_id;
+
+        // GUEST DONT HAVE SUBSCRIPTION
+        if ($user_id <= 0 || ! $this->active()) {
+            return false;
         }
 
-        $subs = $SQL->query("SELECT * FROM {$dbprefix}subscriptions");
-        while ($sub = $SQL->fetch($subs)) {
-            $this->subscriptions[$sub['id']] = $sub;
+        if (! array_key_exists($user_id, $this->users)) {
+            $result = $SQL->build([
+                'SELECT' => 'u.id, u.name, u.package, u.package_expire, u.group_id',
+                'FROM' => "{$dbprefix}users u",
+                'WHERE' => 'u.id = :id',
+                'BIND' => ['id' => $user_id],
+            ]);
+
+            $this->users[$user_id] = $SQL->fetch($result);
+            $SQL->freeresult($result);
         }
+
+        return $this->users[$user_id];
+    }
+
+    /**
+     * the package of a user was changed, read it again the next time
+     *
+     * @param mixed $user_id
+     */
+    public function forget($user_id)
+    {
+        unset($this->users[(int) $user_id]);
     }
 
     public function expire_at($subscripe_id, $time = false)
     {
-        $subscripe = $this->subscriptions[$subscripe_id];
+        $subscripe = $this->packages()[$subscripe_id] ?? false;
 
         if (! $subscripe) {
             return false;
         }
 
-        return ($time ? $time : time()) + ($subscripe['days'] * 86400);
+        return ($time ? $time : time()) + $subscripe['days'] * 86400;
     }
 
     public function get($subscripe_id = 0)
     {
         if ($subscripe_id) {
-            return $this->subscriptions[$subscripe_id] ?? false;
+            return $this->packages()[$subscripe_id] ?? false;
         }
-        return $this->subscriptions;
+
+        return $this->packages();
     }
 
     public function user_subscripe($user_id)
     {
-        return $this->subscriptions[$this->users[$user_id]['package']] ?? '';
+        $user = $this->user($user_id);
+
+        return $user ? $this->packages()[$user['package']] ?? '' : '';
     }
 
     /**
@@ -60,65 +110,86 @@ class Subscription
      */
     public function is_valid($user_id = 0)
     {
-        $user = $this->users[$user_id];
+        $user = $this->user($user_id);
 
         if (! $user || ! $user['package']) {
             return false;
         }
 
-        if (time() < $user['package_expire']) {
-            return true;
-        }
-
-        return false;
+        return time() < $user['package_expire'];
     }
-
 
     public function getMembersCount($subscripe_id)
     {
-        $count = 0;
+        global $SQL, $dbprefix;
 
-        foreach ($this->users as $user) {
-            if ($user['package'] == $subscripe_id && $this->is_valid($user['id'])) {
-                $count++;
-            }
-        }
-        return $count;
+        $result = $SQL->build([
+            'SELECT' => 'COUNT(u.id) AS members',
+            'FROM' => "{$dbprefix}users u",
+            'WHERE' => 'u.package = :package AND u.package_expire > :now',
+            'BIND' => ['package' => (int) $subscripe_id, 'now' => time()],
+        ]);
+
+        $row = $SQL->fetch($result);
+        $SQL->freeresult($result);
+
+        return (int) ($row['members'] ?? 0);
     }
 
     public function addPoint($file_id)
     {
-        /**
-         * before you checking this functiion , remember -> GUEST DONT HAVE SUBSCRIPTION
-         * done -> now check the function
-         */
-        global $SQL , $dbprefix , $usrcp;
+        global $SQL, $dbprefix, $usrcp;
 
+        $file_id = (int) $file_id;
+        $file = getFileInfo($file_id, 'user');
         // first , let's check if the file owner have receive profits permissions
-        $file_owner = getFileInfo($file_id)['user'];
+        $file_owner = $this->user($file ? $file['user'] : 0);
 
-        $file_owner_group = $this->users[$file_owner]['group_id'];
-
-        if (! user_can('recaive_profits', $file_owner_group)) {
+        if (! $file_owner || ! kjp_can('recaive_profits', (int) $file_owner['group_id'])) {
             return;
         }
 
-        $user             = $usrcp->id();
-        $time             = time();
-        $subscription_id  = $this->user_subscripe($user)['id'];
+        $user = $this->user($usrcp->id());
+
+        if (! $user) {
+            return;
+        }
+
+        $subscription_id = (int) $user['package'];
         // subscription_hash -> maybe this user renew the subscription and download this file again , so we need to add a point also again
-        $subscripe_hash   = sha1($user . $subscription_id . $this->users[$user]['package_expire']);
+        $subscripe_hash = sha1($user['id'] . $subscription_id . $user['package_expire']);
 
-        $check_point = $SQL->query("SELECT * FROM `{$dbprefix}subscription_point` WHERE `user` = {$user} AND `file_id` = {$file_id} AND `subscripe_hash` = '{$subscripe_hash}'");
+        $result = $SQL->build([
+            'SELECT' => 'p.id',
+            'FROM' => "{$dbprefix}subscription_point p",
+            'WHERE' => 'p.user = :user AND p.file_id = :file_id AND p.subscripe_hash = :hash',
+            'BIND' => ['user' => (int) $user['id'], 'file_id' => $file_id, 'hash' => $subscripe_hash],
+        ]);
 
-        if (! $SQL->num_rows($check_point)) { // this is first time !!
-            $query       = [
-                'INSERT' => 'user , file_id , subscription_id  , subscripe_hash , time',
-                'INTO'   => "{$dbprefix}subscription_point",
-                'VALUES' => "$user , $file_id , $subscription_id  , '{$subscripe_hash}' , $time",
-            ];
-            $SQL->build($query);
-            $SQL->query("UPDATE `{$dbprefix}users` SET `subs_point` = subs_point+1 WHERE `id` = {$file_owner}");
+        $exists = $SQL->fetch($result);
+        $SQL->freeresult($result);
+
+        // this is first time !!
+        if (! $exists) {
+            $SQL->build([
+                'INSERT' => 'user, file_id, subscription_id, subscripe_hash, time',
+                'INTO' => "{$dbprefix}subscription_point",
+                'VALUES' => ':user, :file_id, :subscription_id, :hash, :time',
+                'BIND' => [
+                    'user' => (int) $user['id'],
+                    'file_id' => $file_id,
+                    'subscription_id' => $subscription_id,
+                    'hash' => $subscripe_hash,
+                    'time' => time(),
+                ],
+            ]);
+
+            $SQL->build([
+                'UPDATE' => "{$dbprefix}users",
+                'SET' => 'subs_point = subs_point + 1',
+                'WHERE' => 'id = :id',
+                'BIND' => ['id' => (int) $file_owner['id']],
+            ]);
         }
     }
 
@@ -131,61 +202,114 @@ class Subscription
      */
     public function convertPoints()
     {
-        global $SQL , $dbprefix , $config;
+        global $SQL, $dbprefix, $config;
 
-        $paidFiles = [];
-
-        // get all paid files one time by one call
-        $files = $SQL->query("SELECT id , user FROM {$dbprefix}files WHERE price > 0");
-
-        while ($file = $SQL->fetch($files)) {
-            $paidFiles[$file['id']]            = $file;
-            $paidFiles[$file['id']]['points']  = 0;
-            $paidFiles[$file['id']]['profits'] = 0;
+        if (! $this->active()) {
+            return;
         }
 
-        // first match
-        foreach ($this->users as $user) {
-            if ($user['package'] && ! $this->is_valid($user['id'])) {
-                $subscription_info = $this->subscriptions[$user['package']];
+        $result = $SQL->build([
+            'SELECT' => 'u.id, u.package',
+            'FROM' => "{$dbprefix}users u",
+            'WHERE' => 'u.package > 0 AND u.package_expire <= :now',
+            'BIND' => ['now' => time()],
+        ]);
 
-                if (! $subscription_info) {
-                    goto reset_user_package;
+        $expired = [];
+
+        while ($user = $SQL->fetch($result)) {
+            $expired[] = $user;
+        }
+
+        $SQL->freeresult($result);
+
+        //profits and taken points of the owners of the files, by their ids
+        $owners = [];
+
+        foreach ($expired as $user) {
+            $user_id = (int) $user['id'];
+
+            //this page is called by many visitors at the same time, only one of them converts the points of a user
+            $SQL->build([
+                'UPDATE' => "{$dbprefix}users",
+                'SET' => 'package = 0, package_expire = 0',
+                'WHERE' => 'id = :id AND package > 0',
+                'BIND' => ['id' => $user_id],
+            ]);
+
+            if ($SQL->affected() !== 1) {
+                continue;
+            }
+
+            $this->forget($user_id);
+
+            $result = $SQL->build([
+                'SELECT' => 'p.file_id',
+                'FROM' => "{$dbprefix}subscription_point p",
+                'WHERE' => 'p.user = :user',
+                'BIND' => ['user' => $user_id],
+            ]);
+
+            $files = [];
+
+            while ($point = $SQL->fetch($result)) {
+                $files[] = (int) $point['file_id'];
+            }
+
+            $SQL->freeresult($result);
+
+            $SQL->build([
+                'DELETE' => "{$dbprefix}subscription_point",
+                'WHERE' => 'user = :user',
+                'BIND' => ['user' => $user_id],
+            ]);
+
+            $subscription_info = $this->packages()[$user['package']] ?? false;
+
+            // check the points counts , Divide by zero -> is danger
+            if (! $subscription_info || ! $files) {
+                continue;
+            }
+
+            $pointPrice = ($subscription_info['price'] * $config['kjp_file_owner_profits']) / 100 / count($files);
+
+            $result = $SQL->build([
+                'SELECT' => 'f.id, f.user',
+                'FROM' => "{$dbprefix}files f",
+                'WHERE' => 'f.price > 0 AND f.id IN (:ids)',
+                'BIND' => ['ids' => array_values(array_unique($files))],
+            ]);
+
+            $file_owners = [];
+
+            while ($file = $SQL->fetch($result)) {
+                $file_owners[$file['id']] = (int) $file['user'];
+            }
+
+            $SQL->freeresult($result);
+
+            foreach ($files as $file_id) {
+                $owner = $file_owners[$file_id] ?? 0;
+
+                // the file owner is not guest
+                if ($owner > 0) {
+                    $owners[$owner] = $owners[$owner] ?? ['profit' => 0, 'points' => 0];
+                    $owners[$owner]['profit'] += $pointPrice;
+                    $owners[$owner]['points']++;
                 }
-                $pointsQuery       = $SQL->query("SELECT * FROM {$dbprefix}subscription_point WHERE user = {$user['id']}");
-
-                $pointsCount = $SQL->num_rows($pointsQuery);
-
-                if ($pointsCount) { // check the points counts , Divide by zero -> is danger , bvvvvvvvvvv
-                    $pointPrice = ($subscription_info['price'] * $config['kjp_file_owner_profits'] / 100) / $pointsCount;
-
-                    while ($points = $SQL->fetch($pointsQuery)) {
-                        if ($paidFiles[$points['file_id']]['user']) { // the file owner is not guest
-                            $paidFiles[$points['file_id']]['points']++;
-    
-                            if (! isset($this->users[$paidFiles[$points['file_id']]['user']]['profit'])) { // please focuse
-                                $this->users[$paidFiles[$points['file_id']]['user']]['profit'] = 0;
-                            }
-                            $this->users[$paidFiles[$points['file_id']]['user']]['profit'] += $pointPrice;
-    
-                            if (! isset($this->users[$paidFiles[$points['file_id']]['user']]['taked_points'])) { // please focuse
-                                $this->users[$paidFiles[$points['file_id']]['user']]['taked_points'] = 0;
-                            }
-                            $this->users[$paidFiles[$points['file_id']]['user']]['taked_points']++;
-                        }
-                    }
-                }
-                reset_user_package:
-                $SQL->query("DELETE FROM {$dbprefix}subscription_point WHERE user = {$user['id']}");
-
-                $SQL->query("UPDATE {$dbprefix}users SET `package` = 0 , `package_expire` = 0 WHERE id = {$user['id']}");
             }
         }
 
-        // second match
-        foreach ($this->users as $u) {
-            if (isset($u['profit']) && $u['profit'] > 0) {
-                $SQL->query("UPDATE {$dbprefix}users SET `balance` = balance+{$u['profit']} , `subs_point` = subs_point-{$u['taked_points']} WHERE `id` = '{$u['id']}'");
+        foreach ($owners as $owner => $totals) {
+            if ($totals['profit'] > 0) {
+                kjp_give_balance($owner, $totals['profit']);
+
+                $SQL->build([
+                    'UPDATE' => "{$dbprefix}users",
+                    'SET' => 'subs_point = subs_point - :points',
+                    'WHERE' => 'id = :id',
+                    'BIND' => ['points' => $totals['points'], 'id' => $owner],
+                ]);
             }
         }
     }

@@ -1392,6 +1392,39 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
         return compact('ADM_NOTIFICATIONS');
     },
 
+    // the payments of a period on the Status Reports page of the plugin kleeja_advanced_stats,
+    // only the founders see them, like the payments control (php/kj_payment_options.php)
+    'status_reports_extra_html' => function ($args) {
+        if (intval($args['userinfo']['founder'] ?? 0) !== 1) {
+            return [];
+        }
+
+        require_once __DIR__ . '/php/status_reports.php';
+
+        $sr_extra_html = $args['sr_extra_html'];
+        $sr_extra_html[] = kjp_status_report($args);
+
+        return compact('sr_extra_html');
+    },
+
+    // the style and the charts of those payments, with the version so browsers load them again after an update
+    'status_reports_extra_files' => function ($args) {
+        if (intval($args['userinfo']['founder'] ?? 0) !== 1) {
+            return [];
+        }
+
+        $info = Plugins::getInstance()->installed_plugin_info('kleeja_payment');
+        $folder = $args['config']['siteurl'] . KLEEJA_PLUGINS_FOLDER . '/kleeja_payment/assets/';
+        $version = '?v=' . rawurlencode($info['plugin_version'] ?? '1');
+
+        $sr_extra_css = $args['sr_extra_css'];
+        $sr_extra_js = $args['sr_extra_js'];
+        $sr_extra_css[] = $folder . 'status_reports.css' . $version;
+        $sr_extra_js[] = $folder . 'status_reports.js' . $version;
+
+        return compact('sr_extra_css', 'sr_extra_js');
+    },
+
     /*
     //Example
     'kjPay:addToCPanel' => function ($args) {

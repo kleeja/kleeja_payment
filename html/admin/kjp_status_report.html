@@ -1,0 +1,214 @@
+<!-- the payments of the period on the Status Reports page of the plugin kleeja_advanced_stats, from php/status_reports.php;
+     every [data-kj-pdf-block] is kept whole on one page of its PDF file -->
+<div<IF NAME="kjp_sr.has_any"> class="mb-4"</IF> data-kj-pdf-block>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h2 class="kj-card-title"><i class="fa-solid fa-sack-dollar" aria-hidden="true"></i> {olang.KJP_SR_TITLE}</h2>
+        <span class="kj-badge is-neutral" dir="ltr">{kjp_sr.currency}</span>
+        <a class="ms-auto small" href="{kjp_sr.page}">{olang.R_KJ_PAYMENT_OPTIONS} <i class="fa-solid fa-angle-right kj-flip-rtl" aria-hidden="true"></i></a>
+    </div>
+
+    <IF NAME="kjp_sr.has_any">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xxl-4 g-3">
+        <LOOP NAME="kjp_sr_cards">
+        <div class="col">
+            <div class="card kj-stat h-100">
+                <div class="card-body">
+                    <div style="min-width: 0">
+                        <div class="kj-stat-label">{{title}}</div>
+                        <div class="kj-stat-value"><span dir="ltr">{{value}}</span></div>
+                        <IF LOOP="meta"><div class="kj-stat-meta"><span dir="auto">{{meta}}</span></div></IF>
+                        <IF LOOP="has_trend">
+                        <div class="kj-stat-meta d-flex flex-wrap align-items-center gap-1" title="{{previous}}" data-bs-toggle="tooltip">
+                            <span class="kj-badge is-neutral"><i class="fa-solid fa-{{trend_icon}}" aria-hidden="true"></i><span dir="ltr">{{change}}</span></span>
+                            <span>{olang.KJP_SR_VS_PREVIOUS}</span>
+                            <span class="visually-hidden">{{previous}}</span>
+                        </div>
+                        <ELSE>
+                        <div class="kj-stat-meta">{{previous}}</div>
+                        </IF>
+                    </div>
+                    <span class="kj-icon-tile{{tile}}"><i class="fa-solid fa-{{icon}}" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>
+        </LOOP>
+    </div>
+    <ELSE>
+    <div class="card">
+        <div class="card-body text-body-secondary text-center py-4">{olang.KJP_SR_EMPTY}</div>
+    </div>
+    </IF>
+</div>
+
+<IF NAME="kjp_sr.has_any">
+
+<IF NAME="kjp_sr.has_sales">
+<!-- data of the charts, drawn by assets/status_reports.js of Kleeja Payment -->
+<script type="application/json" id="kjpReportData">{kjp_sr_chart}</script>
+
+<div class="row g-3 mb-4" data-kj-pdf-block>
+    <!-- revenue of the points of the period, a part of a bar for each method -->
+    <div class="col-xl-8">
+        <section class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> {olang.KJP_SR_REVENUE_CHART}</h2>
+                <ul class="kj-chart-legend ms-auto">
+                    <LOOP NAME="kjp_sr_methods">
+                    <li><i class="kjp-swatch-{{swatch}}" aria-hidden="true"></i>{{name}}</li>
+                    </LOOP>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div id="kjpReportRevenue" class="kj-chart"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- revenue of files, groups and subscriptions -->
+    <div class="col-xl-4">
+        <section class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> {olang.KJP_SR_BY_TYPE}</h2>
+            </div>
+            <div class="card-body border-bottom">
+                <div id="kjpReportTypes" class="kj-chart kjp-donut"></div>
+            </div>
+            <ul class="list-group list-group-flush">
+                <LOOP NAME="kjp_sr_types">
+                <li class="list-group-item kj-kv">
+                    <span class="d-inline-flex align-items-center gap-2"><i class="kjp-swatch kjp-swatch-{{swatch}}" aria-hidden="true"></i>{{name}}</span>
+                    <span><span class="text-body-secondary fw-normal">{{count}} ·</span> <span dir="ltr">{{amount}}</span></span>
+                </li>
+                </LOOP>
+            </ul>
+        </section>
+    </div>
+</div>
+
+<div class="row g-3 mb-4" data-kj-pdf-block>
+    <!-- payment methods -->
+    <div class="col-xl-6">
+        <section class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-credit-card" aria-hidden="true"></i> {olang.KJP_SR_METHODS}</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">{olang.KJP_SR_METHOD}</th>
+                            <th scope="col" class="text-center">{olang.KJP_SR_SALES}</th>
+                            <th scope="col">{olang.KJP_SR_AMOUNT}</th>
+                            <th scope="col" class="d-none d-sm-table-cell">{olang.KJP_SR_SHARE}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <LOOP NAME="kjp_sr_methods">
+                        <tr>
+                            <td class="text-nowrap"><span class="d-inline-flex align-items-center gap-2"><i class="kjp-swatch kjp-swatch-{{swatch}}" aria-hidden="true"></i>{{name}}</span></td>
+                            <td class="text-center fw-semibold">{{count}}</td>
+                            <td class="text-nowrap"><span dir="ltr">{{amount}}</span></td>
+                            <td class="d-none d-sm-table-cell">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" role="progressbar" aria-label="{olang.KJP_SR_SHARE}" aria-valuenow="{{share}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 3rem">
+                                        <div class="progress-bar kjp-swatch-{{swatch}}" style="width: {{share}}%"></div>
+                                    </div>
+                                    <span class="small text-body-secondary" dir="ltr">{{share}}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        </LOOP>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- what was sold the most, by amount -->
+    <div class="col-xl-6">
+        <section class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-trophy" aria-hidden="true"></i> {olang.KJP_SR_TOP_ITEMS}</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">{olang.KJP_SR_ITEM}</th>
+                            <th scope="col" class="d-none d-md-table-cell">{olang.KJP_SR_TYPE}</th>
+                            <th scope="col" class="text-center">{olang.KJP_SR_SALES}</th>
+                            <th scope="col">{olang.KJP_SR_AMOUNT}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <LOOP NAME="kjp_sr_items">
+                        <tr>
+                            <td>
+                                <div class="kj-truncate">
+                                    <a class="text-truncate d-block" href="{{link}}" title="{{name}}" dir="auto">{{name}}</a>
+                                </div>
+                            </td>
+                            <td class="text-nowrap d-none d-md-table-cell"><span class="kj-badge is-neutral">{{type}}</span></td>
+                            <td class="text-center fw-semibold">{{count}}</td>
+                            <td class="text-nowrap"><span dir="ltr">{{amount}}</span></td>
+                        </tr>
+                        </LOOP>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+</IF>
+
+<div class="row g-3" data-kj-pdf-block>
+    <!-- payouts that the members asked for in this period -->
+    <div class="col-xl-6">
+        <section class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i> {olang.KJP_PAYOUTS}</h2>
+                <a class="ms-auto small" href="{kjp_sr.payouts_link}">{olang.KJP_VIEW_ALL}</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                <LOOP NAME="kjp_sr_payouts">
+                <li class="list-group-item kj-kv">
+                    <span>{{title}} <span class="kj-badge is-neutral">{{count}}</span></span>
+                    <span dir="ltr">{{amount}}</span>
+                </li>
+                </LOOP>
+            </ul>
+        </section>
+    </div>
+
+    <!-- the latest payments of the period -->
+    <div class="col-xl-6">
+        <section class="card h-100">
+            <div class="card-header kj-card-header">
+                <h2 class="kj-card-title"><i class="fa-solid fa-receipt" aria-hidden="true"></i> {olang.KJP_SR_LATEST}</h2>
+                <a class="ms-auto small" href="{kjp_sr.transactions_link}">{olang.KJP_VIEW_ALL}</a>
+            </div>
+            <IF NAME="kjp_sr_latest">
+            <ul class="list-group list-group-flush">
+                <LOOP NAME="kjp_sr_latest">
+                <li class="list-group-item py-3">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="text-truncate" dir="auto">{{title}}</span>
+                        <span class="ms-auto fw-semibold text-nowrap" dir="ltr">{{amount}}</span>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 small text-body-secondary">
+                        <a href="{{link}}" dir="ltr">#{{id}}</a>
+                        <span>{{buyer}}</span>
+                        <span class="kj-badge is-neutral">{{method}}</span>
+                        <span class="ms-auto text-nowrap" title="{{time}}" data-bs-toggle="tooltip">{{time_human}}</span>
+                    </div>
+                </li>
+                </LOOP>
+            </ul>
+            <ELSE>
+            <div class="card-body text-body-secondary text-center py-4">{olang.KJP_SR_NOTHING}</div>
+            </IF>
+        </section>
+    </div>
+</div>
+
+</IF>

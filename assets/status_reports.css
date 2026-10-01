@@ -1,0 +1,42 @@
+/*
+ * Kleeja Payment, its stats on the Status Reports page of the plugin kleeja_advanced_stats (php/status_reports.php).
+ * Loaded on that page only, after the Damask admin theme, so it uses the brand colours of its tokens.
+ */
+
+/* the colours of the methods and the types, in the order of the colours of assets/status_reports.js */
+.kjp-swatch-0 {
+    background: var(--kj-coral);
+}
+
+.kjp-swatch-1 {
+    background: var(--kj-navy);
+}
+
+[data-bs-theme="dark"] .kjp-swatch-1 {
+    background: var(--kj-navy-300);
+}
+
+.kjp-swatch-2 {
+    background: var(--kj-coral-400);
+}
+
+.kjp-swatch-3 {
+    background: var(--kj-navy-400);
+}
+
+[data-bs-theme="dark"] .kjp-swatch-3 {
+    background: var(--kj-navy-500);
+}
+
+/* a swatch before a name, like the ones of .kj-chart-legend */
+.kjp-swatch {
+    display: inline-block;
+    flex: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 2px;
+}
+
+.kj-chart.kjp-donut {
+    height: 220px;
+}

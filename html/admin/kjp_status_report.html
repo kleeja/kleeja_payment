@@ -1,8 +1,8 @@
-<!-- the payments of the period on the Status Reports page of the plugin kleeja_advanced_stats, from php/status_reports.php;
-     every [data-kj-pdf-block] is kept whole on one page of its PDF file -->
+<!-- the payments of the period in a tab of the Status Reports page of the plugin kleeja_advanced_stats, from
+     php/status_reports.php; the tab has the title, every [data-kj-pdf-block] is kept whole on one page of its PDF file -->
 <div<IF NAME="kjp_sr.has_any"> class="mb-4"</IF> data-kj-pdf-block>
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h2 class="kj-card-title"><i class="fa-solid fa-sack-dollar" aria-hidden="true"></i> {olang.KJP_SR_TITLE}</h2>
+        <span class="small text-body-secondary">{olang.KJP_SR_CURRENCY}</span>
         <span class="kj-badge is-neutral" dir="ltr">{kjp_sr.currency}</span>
         <a class="ms-auto small" href="{kjp_sr.page}">{olang.R_KJ_PAYMENT_OPTIONS} <i class="fa-solid fa-angle-right kj-flip-rtl" aria-hidden="true"></i></a>
     </div>

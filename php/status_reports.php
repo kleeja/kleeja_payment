@@ -188,7 +188,8 @@ function kjp_status_report(array $args): string
     $cards = [
         [
             'title' => $olang['KJP_SR_REVENUE'],
-            'value' => $money($sum['amount'][0]),
+            // the currency is over the cards, a long sum with it does not fit on one line
+            'value' => number_format($sum['amount'][0], 2),
             'meta' => $fees > 0 ? sprintf($olang['KJP_SR_NET'], $ltr($money($sum['amount'][0] - $fees))) : '',
             'icon' => 'sack-dollar',
             'tile' => '',

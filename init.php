@@ -1392,9 +1392,11 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
         return compact('ADM_NOTIFICATIONS');
     },
 
-    // the payments of a period on the Status Reports page of the plugin kleeja_advanced_stats,
+    // the payments of a period in a tab of the Status Reports page of the plugin kleeja_advanced_stats,
     // only the founders see them, like the payments control (php/kj_payment_options.php)
     'status_reports_extra_html' => function ($args) {
+        global $olang;
+
         if (intval($args['userinfo']['founder'] ?? 0) !== 1) {
             return [];
         }
@@ -1402,7 +1404,11 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
         require_once __DIR__ . '/php/status_reports.php';
 
         $sr_extra_html = $args['sr_extra_html'];
-        $sr_extra_html[] = kjp_status_report($args);
+        $sr_extra_html['kleeja_payment'] = [
+            'title' => $olang['KJP_SR_TITLE'],
+            'icon' => 'sack-dollar',
+            'html' => kjp_status_report($args),
+        ];
 
         return compact('sr_extra_html');
     },

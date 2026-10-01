@@ -226,6 +226,7 @@ return [
     'KJP_STYLE_NOT_SUPPORTED' => 'هذه الصفحة ليس لها تصميم لستايل الموقع الحالي بعد.',
     // the payments on the Status Reports page of the plugin kleeja_advanced_stats, php/status_reports.php
     'KJP_SR_TITLE' => 'المدفوعات',
+    'KJP_SR_CURRENCY' => 'العملة',
     'KJP_SR_EMPTY' => 'لا توجد مدفوعات ولا عمليات سحب في هذه الفترة.',
     'KJP_SR_NOTHING' => 'لا يوجد شيء في هذه الفترة.',
     'KJP_SR_VS_PREVIOUS' => 'عن الفترة السابقة',

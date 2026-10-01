@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'R_KJ_PAYMENT_OPTIONS'                => 'مدفوعات كليجا' ,
+    'R_KJ_PAYMENT_OPTIONS'                => 'نظام كليجة للدفع الإلكتروني' ,
     'KJP_JOIN_PRICE'                      => 'سعر الإنضمام' ,
     'KJP_PAYPAL_CLIENT_ID'                => 'معرف العميل ( PayPal Client ID )' ,
     'KJP_PAYPAL_CLIENT_SECRET'            => 'كلمة السر لمعرف العميل ( PayPal Secret )' ,
     'KJP_ISO_CURRENCY_CODE'               => 'رمز العملة ISO' ,
     'KJP_DOWN_LINK_EXPIRE'                => 'تنتهي صلاحية رابط التنزيل بعد س يوم ( 0 ) صالح دائما' ,
-    'CONFIG_KLJ_MENUS_KLEEJA_PAYMENT'     => 'إعدادات Kleeja Payment' ,
+    'CONFIG_KLJ_MENUS_KLEEJA_PAYMENT'     => 'إعدادات نظام كليجة للدفع الإلكتروني' ,
     'KJP_ALL_TRNC'                        => 'جميع المعاملات',
     'KJP_TRNC'                            => 'المعاملات',
     'KJP_NT_PRFIT'                        => 'صافي الربح',

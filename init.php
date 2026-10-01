@@ -17,7 +17,7 @@ $kleeja_plugin['kleeja_payment']['information'] = [
     // the casual name of this plugin, anything can a human being understands
     'plugin_title' => [
         'en' => 'Kleeja Payment',
-        'ar' => 'مدفوعات كليجا',
+        'ar' => 'نظام كليجة للدفع الإلكتروني',
     ],
     // who wrote this plugin?
     'plugin_developer' => 'Kleeja Team',

@@ -61,9 +61,32 @@ function kjp_template_path(string $template): string
 {
     global $THIS_STYLE_PATH_ABS;
 
-    return file_exists($THIS_STYLE_PATH_ABS . 'kj_payment/' . $template . '.html')
-        ? $THIS_STYLE_PATH_ABS . 'kj_payment/'
-        : dirname(__DIR__) . '/html/';
+    if (file_exists($THIS_STYLE_PATH_ABS . 'kj_payment/' . $template . '.html')) {
+        return $THIS_STYLE_PATH_ABS . 'kj_payment/';
+    }
+
+    // a style that the plugin has no templates for gets the bootstrap ones, they say that the style is not supported
+    return dirname(__DIR__) . '/html/' . (kjp_style_folder() ?: 'bootstrap') . '/';
+}
+
+/**
+ * folder in "html" of the templates for the style of the site, or for the style it depends on
+ *
+ * @return string empty when the plugin has no templates for them
+ */
+function kjp_style_folder(): string
+{
+    global $config;
+
+    $styles = [empty($config['style']) ? 'bootstrap' : $config['style'], trim((string) ($config['style_depend_on'] ?? ''))];
+
+    foreach ($styles as $style) {
+        if (in_array($style, ['bootstrap', 'default'], true)) {
+            return $style;
+        }
+    }
+
+    return '';
 }
 
 /**
@@ -260,13 +283,9 @@ function getGroupInfo($groupData, $getGroup = 'all')
 
 function is_style_supported()
 {
-    global $config;
-
-    //the templates of this plugin are made with Bootstrap,
+    //the plugin has templates for the bootstrap and the default styles,
     //other styles bring their own templates in a "kj_payment" folder
-    $styles = [empty($config['style']) ? 'bootstrap' : $config['style'], trim((string) ($config['style_depend_on'] ?? ''))];
-
-    return in_array('bootstrap', $styles, true);
+    return kjp_style_folder() !== '';
 }
 
 /*

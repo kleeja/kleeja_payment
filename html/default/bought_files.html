@@ -1,0 +1,62 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Bought files template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{title}</h1>
+    <!-- @end-title -->
+
+    <IF NAME="havePayments">
+
+    <div class="box kjp-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{lang.FILENAME}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col" class="num"><span class="visually-hidden">{lang.DOWNLAOD}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="myPayments">
+                <tr>
+                    <th scope="row">{{ID}}</th>
+                    <td class="kjp-name" dir="auto">{{FILE}}</td>
+                    <td class="kjp-nowrap"><bdi>{{AMOUNT}}</bdi></td>
+                    <td class="kjp-nowrap"><bdi dir="ltr">{{DATE_TIME}}</bdi></td>
+                    <td class="num">
+                        <a href="{{DOWN_LINK}}" class="btn btn-primary"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>{lang.DOWNLAOD}</a>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+
+    <IF NAME="page_nums">
+    <!-- pagination -->
+    <div class="pager">{page_nums}</div>
+    <!-- @end-pagination -->
+    </IF>
+
+    <ELSE>
+
+    <!-- no bought files -->
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{olang.KJP_NO_BOUGHT_FILES}</h2>
+    </div>
+    <!-- @end-no-bought-files -->
+
+    </IF>
+
+</div>
+<!-- @end-Bought-files -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

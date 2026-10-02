@@ -1,0 +1,38 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Download link by e-mail template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{olang.KJP_MAIL_INFO_1}</h1>
+    <p class="title-note">{olang.KJP_FILE_NAME}: <strong dir="auto">{fileName}</strong></p>
+    <!-- @end-title -->
+
+    <div class="form-layout">
+        <!-- form -->
+        <form class="form-main" action="{FormAction}" method="post">
+
+            <div class="field">
+                <label for="kjp-buyer-mail">{olang.KJP_MAIL}</label>
+                <input type="email" name="buyerMail" id="kjp-buyer-mail" dir="ltr" autocomplete="email" aria-describedby="kjp-mail-help" required>
+                <p class="explain" id="kjp-mail-help">{olang.KJP_MAIL_INFO_2}</p>
+            </div>
+
+            {kjFormKeyPost}
+
+            <div class="form-actions">
+                <button type="submit" name="sendMail" value="1" class="btn btn-primary btn-lg">{lang.SUBMIT}</button>
+            </div>
+        </form>
+        <!-- @end-form -->
+
+        <img class="page-art" src="{STYLE_PATH}images/call.gif" width="128" height="128" alt="">
+    </div>
+
+</div>
+<!-- @end-Download-link-by-e-mail -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

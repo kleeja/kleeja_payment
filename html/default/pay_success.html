@@ -1,0 +1,55 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Successful payment template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{olang.KJP_SCES_PAY}</h1>
+    <!-- @end-title -->
+
+    <div class="box kjp-panel">
+        <div class="box-body">
+
+            <IF NAME="down_link">
+
+            <img src="{STYLE_PATH}images/download.png" width="80" height="80" alt="">
+            <p>{olang.KJP_FILE_NAME}: <strong dir="auto">{file_name}</strong></p>
+
+            <IF NAME="showMailForm">
+            <!-- the link could not be sent, the buyer types his e-mail address -->
+            <form action="{FormAction}" method="post">
+                {kjFormKeyPost}
+                <div class="field">
+                    <label for="kjp-buyer-mail">{olang.KJP_MAIL_INFO_1}</label>
+                    <div class="input-group">
+                        <input type="email" name="buyerMail" id="kjp-buyer-mail" dir="ltr" placeholder="{olang.KJP_MAIL}" autocomplete="email" aria-describedby="kjp-mail-help" required>
+                        <button type="submit" name="sendMail" value="1" class="btn btn-primary">{lang.SUBMIT}</button>
+                    </div>
+                    <p class="explain" id="kjp-mail-help">{olang.KJP_MAIL_INFO_2}</p>
+                </div>
+            </form>
+            <ELSE>
+            <p>{olang.KJP_DOWN_INFO_2}</p>
+
+            <a class="btn-download" href="{down_link}" target="_blank" rel="nofollow">
+                <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>{lang.CLICK_DOWN}
+            </a>
+            </IF>
+
+            <ELSE>
+
+            <img src="{STYLE_PATH}images/register.gif" width="128" height="128" alt="">
+            <p>{olang.KJP_JUIN_SUCCESS} <strong dir="auto">{groupName}</strong></p>
+
+            </IF>
+
+        </div>
+    </div>
+
+</div>
+<!-- @end-Successful-payment -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

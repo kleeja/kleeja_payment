@@ -1,0 +1,89 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Paid file template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title" dir="auto">{name}</h1>
+    <!-- @end-title -->
+
+    <IF NAME="config.kjp_active_subscriptions">
+    <div class="notice" role="status">
+        <img src="{STYLE_PATH}images/info.png" width="29" height="29" alt="">
+        <div class="notice-body">{olang.KJP_THERW_IS_SUBSCRIPE}</div>
+    </div>
+    </IF>
+
+    <div class="download-layout">
+
+        <!-- Information File -->
+        <div class="data_file box">
+            <div class="box-title">{lang.FILE_INFO}</div>
+            <table class="data_menu">
+                <tr>
+                    <th scope="row">{lang.FILENAME}</th>
+                    <td dir="auto">{name}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{lang.FILETYPE}</th>
+                    <td>{type}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{lang.FILESIZE}</th>
+                    <td><bdi>{size}</bdi></td>
+                </tr>
+                <tr>
+                    <th scope="row">{lang.FILEDATE}</th>
+                    <td>{time}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{lang.FILEUPS}</th>
+                    <td>{uploads}</td>
+                </tr>
+                <IF NAME="fusername">
+                <tr>
+                    <th scope="row">{lang.USERNAME}</th>
+                    <td><a href="{userfolder}">{fusername}</a></td>
+                </tr>
+                </IF>
+            </table>
+            <a class="filereport" href="{REPORT}" rel="nofollow"><img src="{STYLE_PATH}images/zl.png" width="19" height="19" alt="">{lang.FILEREPORT}</a>
+        </div>
+        <!-- @end-Information-File -->
+
+        <!-- buy box, in place of the wait of the free files -->
+        <div class="data_file_down kjp-buy">
+            <img src="{STYLE_PATH}images/download.png" width="80" height="80" alt="">
+            <p class="find_x">{olang.KJP_PRC}</p>
+            <div class="kjp-price"><bdi>{price} {config.kjp_iso_currency_code}</bdi></div>
+
+            <IF NAME="payment_methods">
+            <form action="{FormAction}" method="post">
+                <div class="field">
+                    <label for="kjp-method">{olang.KJP_PAY_MTHD}</label>
+                    <select id="kjp-method" name="method">
+                        <LOOP NAME="payment_methods">
+                        <option value="{{method}}">{{name}}</option>
+                        </LOOP>
+                    </select>
+                </div>
+
+                <button type="submit" name="buy_file" value="1" class="btn btn-primary btn-lg">{olang.KJP_BUY}</button>
+            </form>
+            <ELSE>
+            <div class="notice notice-error" role="alert">
+                <img src="{STYLE_PATH}images/err.gif" width="29" height="29" alt="">
+                <div class="notice-body">{olang.KJP_PAY_METHOD_ERR}</div>
+            </div>
+            </IF>
+        </div>
+        <!-- @end-buy-box -->
+
+    </div>
+</div>
+<!-- @end-Paid-file-template -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

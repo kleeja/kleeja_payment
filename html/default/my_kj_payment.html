@@ -1,0 +1,283 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Payment panel of the member template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{title}</h1>
+    <!-- @end-title -->
+
+    <!-- tabs -->
+    <nav aria-label="{title}">
+        <ul class="kjp-tabs">
+            <li><a href="{action}&amp;case=cp"<IF NAME="case == cp"> class="current" aria-current="page"</IF>>{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+            <li><a href="{action}&amp;case=pricing_file"<IF NAME="case == pricing_file"> class="current" aria-current="page"</IF>>{olang.KJP_PRC_FILE}</a></li>
+            <li><a href="{action}&amp;case=my_paid_files"<IF NAME="case == my_paid_files"> class="current" aria-current="page"</IF>>{olang.KJP_PAID_FILE}</a></li>
+            <li><a href="{action}&amp;case=files_payments"<IF NAME="case == files_payments"> class="current" aria-current="page"</IF>>{olang.KJP_FRO}</a></li>
+            <li><a href="{action}&amp;case=withdrawals"<IF NAME="case == withdrawals"> class="current" aria-current="page"</IF>>{olang.KJP_WTHDR}</a></li>
+        </ul>
+    </nav>
+    <!-- @end-tabs -->
+
+
+    <IF NAME="case == cp">
+
+    <!-- balance and points -->
+    <div id="boxfileuser">
+        <div class="fu-box">
+            <img src="{STYLE_PATH}images/boxfileuser.png" width="64" height="64" alt="">
+            <div class="fu-box-text">
+                <div class="public">{olang.KJP_BLNC}</div>
+                <div class="uname"><bdi>{user_balance}</bdi></div>
+            </div>
+        </div>
+        <IF NAME="config.kjp_active_subscriptions">
+        <div class="fu-box">
+            <img src="{STYLE_PATH}images/imguser.png" width="64" height="64" alt="">
+            <div class="fu-box-text">
+                <div class="public">{olang.KJP_POINTS}</div>
+                <div class="uname">{user_subs_points}</div>
+            </div>
+        </div>
+        </IF>
+    </div>
+    <!-- @end-balance-and-points -->
+
+    <!-- ask for an amount of the balance -->
+    <form class="box kjp-form" action="{action}" method="post">
+        <h2 class="box-title box-title-sky">{olang.KJP_WTHDR}</h2>
+        <div class="box-body">
+            <input type="hidden" name="PayoutMethod" value="paypal">
+
+            <div class="field">
+                <label for="kjp-amount">{olang.KJP_ENTR_AMNT}</label>
+                <div class="input-group">
+                    <input type="number" name="AmountNumber" id="kjp-amount" dir="ltr" min="0" step="0.01" inputmode="decimal" required>
+                    <span class="kjp-addon">{currency}</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="kjp-password">{olang.KJP_ENTR_PASS}</label>
+                <input class="input-password" type="password" name="userPass" id="kjp-password" autocomplete="current-password" required>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            {withdraw_form_key}
+            <button type="submit" name="requestAmount" value="1" class="btn btn-primary">{lang.SUBMIT}</button>
+        </div>
+    </form>
+    <!-- @end-ask-for-an-amount -->
+
+
+    <ELSEIF NAME="case == withdrawals">
+
+    <IF NAME="havePayout">
+    <div class="box kjp-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_POUT_ID}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col">{olang.KJP_POUT_ST}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payouts">
+                <tr>
+                    <th scope="row">{{ID}}</th>
+                    <td>{{METHOD}}</td>
+                    <td class="kjp-nowrap"><bdi>{{AMOUNT}}</bdi></td>
+                    <td class="kjp-nowrap"><bdi dir="ltr">{{DATE_TIME}}</bdi></td>
+                    <td>
+                        <IF LOOP="STATE == cancel">
+                        <span class="kjp-state kjp-state-cancel">{{STATE_LANG}}</span>
+                        <ELSEIF LOOP="STATE == verify">
+                        <span class="kjp-state kjp-state-verify">{{STATE_LANG}}</span>
+                        <ELSEIF LOOP="STATE == sent">
+                        <span class="kjp-state kjp-state-sent">{{STATE_LANG}}</span>
+                        <ELSE>
+                        <span class="kjp-state">{{STATE_LANG}}</span>
+                        </IF>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+
+    <IF NAME="page_nums">
+    <div class="pager">{page_nums}</div>
+    </IF>
+    <ELSE>
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{olang.KJP_NO_POUT_YET}</h2>
+    </div>
+    </IF>
+
+
+    <ELSEIF NAME="case == files_payments">
+
+    <IF NAME="havePayments">
+    <div class="box kjp-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{olang.KJP_FILE_NAME}</th>
+                    <th scope="col">{olang.KJP_MEMBER}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payments">
+                <tr>
+                    <th scope="row">{{ID}}</th>
+                    <td class="kjp-name" dir="auto">{{FILE_NAME}}</td>
+                    <td>{{BUYER}}</td>
+                    <td>{{METHOD}}</td>
+                    <td class="kjp-nowrap"><bdi dir="ltr">{{DATE_TIME}}</bdi></td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+
+    <IF NAME="page_nums">
+    <div class="pager">{page_nums}</div>
+    </IF>
+    <ELSE>
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{olang.KJP_NO_FL_PMNT}</h2>
+    </div>
+    </IF>
+
+
+    <ELSEIF NAME="case == my_paid_files">
+
+    <IF NAME="have_paid_file">
+    <div class="box kjp-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">{olang.KJP_FILE_NAME}</th>
+                    <th scope="col">{olang.KJP_PRC}</th>
+                    <th scope="col" class="num"><span class="visually-hidden">{olang.KJP_ACTION}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="all_paid_file">
+                <tr>
+                    <th scope="row">{{id}}</th>
+                    <td class="kjp-name"><a href="{{link}}" target="_blank" dir="auto">{{name}}</a></td>
+                    <td class="kjp-nowrap"><bdi>{{price}}</bdi></td>
+                    <td class="num">
+                        <form method="post" action="{action}&amp;case=pricing_file">
+                            <input type="hidden" name="select_file_id" value="{{id}}">
+                            <button type="submit" name="open_file" value="1" class="btn">{olang.KJP_EDT_PRC}</button>
+                        </form>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+
+    <IF NAME="page_nums">
+    <div class="pager">{page_nums}</div>
+    </IF>
+    <ELSE>
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{olang.KJP_NO_PAID_FILES}</h2>
+    </div>
+    </IF>
+
+
+    <ELSEIF NAME="case == pricing_file">
+
+    <IF NAME="OpenAlert">
+    <IF NAME="AlertRole == success">
+    <div class="notice" role="status">
+        <img src="{STYLE_PATH}images/info.png" width="29" height="29" alt="">
+        <div class="notice-body">{AlertMsg}</div>
+    </div>
+    <ELSE>
+    <div class="notice notice-error" role="alert">
+        <img src="{STYLE_PATH}images/err.gif" width="29" height="29" alt="">
+        <div class="notice-body">{AlertMsg}</div>
+    </div>
+    </IF>
+    </IF>
+
+    <IF NAME="show_price_panel">
+
+    <form class="box kjp-form" method="post" action="{action}&amp;case=pricing_file">
+        <h2 class="box-title box-title-sky">{olang.KJP_FILE_INFO}</h2>
+        <table class="data_menu">
+            <tr>
+                <th scope="row">{olang.KJP_FILE_NAME}</th>
+                <td dir="auto">{FileName}</td>
+            </tr>
+            <tr>
+                <th scope="row">{olang.KJP_FILE_OWNR}</th>
+                <td>{FileUser}</td>
+            </tr>
+            <tr>
+                <th scope="row">{olang.KJP_FILE_SZE}</th>
+                <td><bdi>{FileSize}</bdi></td>
+            </tr>
+        </table>
+
+        <div class="box-body">
+            <input type="hidden" name="price_file_id" value="{FileID}">
+
+            <div class="field">
+                <label for="kjp-price">{olang.KJP_PRC}</label>
+                <div class="input-group">
+                    <input type="number" id="kjp-price" name="price_file" value="{FilePrice}" dir="ltr" min="{min_price}" max="{max_price}" step="0.01" inputmode="decimal" aria-describedby="kjp-price-help" required>
+                    <span class="kjp-addon">{currency}</span>
+                </div>
+                <p class="explain" id="kjp-price-help"><bdi dir="ltr">{min_price} - {max_price} {currency}</bdi></p>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            {price_form_key}
+            <button type="submit" name="set_price" value="1" class="btn btn-primary">{olang.KJP_SET_PRC}</button>
+        </div>
+    </form>
+
+    <ELSE>
+
+    <form class="box kjp-form" method="post" action="{action}&amp;case=pricing_file">
+        <h2 class="box-title box-title-sky">{olang.KJP_PRC_FILE}</h2>
+        <div class="box-body">
+            <div class="field">
+                <label for="kjp-file">{olang.KJP_ENT_ID_URL}</label>
+                <div class="input-group">
+                    <input type="text" id="kjp-file" name="select_file_id" dir="ltr" required>
+                    <button type="submit" name="open_file" value="1" class="btn btn-primary">{olang.KJP_OPN_FILE}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    </IF>
+
+    </IF>
+
+</div>
+<!-- @end-Payment-panel -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

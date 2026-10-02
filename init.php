@@ -773,18 +773,21 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
             'name' => 'my_kj_payment',
             'title' => $olang['R_KJ_PAYMENT_OPTIONS'],
             'url' => $config['siteurl'] . 'ucp.php?go=my_kj_payment',
+            'icon' => 'wallet',
             'show' => $user_is && kjp_can('recaive_profits'),
         ];
         $side_menu[] = [
             'name' => 'my_payments',
             'title' => $olang['KJP_MY_PAYS'],
             'url' => $config['siteurl'] . 'ucp.php?go=my_payments',
+            'icon' => 'receipt',
             'show' => (bool) $user_is,
         ];
         $side_menu[] = [
             'name' => 'bought_files',
             'title' => $olang['KJP_BOUGHT_FILES'],
             'url' => $config['siteurl'] . 'ucp.php?go=bought_files',
+            'icon' => 'bag-shopping',
             'show' => $user_is && kjp_can('access_bought_files'),
         ];
         $top_menu[] = [

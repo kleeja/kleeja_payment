@@ -620,6 +620,64 @@ function kjp_link_lifetime(): int
 }
 
 /**
+ * link that downloads a bought file, the begin_download_page hook checks it
+ *
+ * @param  array  $payment the row of the payment
+ * @return string
+ */
+function kjp_down_link(array $payment): string
+{
+    global $config;
+
+    return $config['siteurl'] .
+        'do.php?downPaidFile=' .
+        (int) $payment['item_id'] .
+        '_' .
+        (int) $payment['id'] .
+        '_' .
+        $payment['payment_token'];
+}
+
+/**
+ * send the download link of a bought file to the buyer, as an HTML e-mail of Kleeja
+ *
+ * @param  string $to         e-mail address of the buyer
+ * @param  array  $payment    the row of the payment
+ * @param  string $linkExpire when the link expires, as the page of the payment shows it
+ * @return bool
+ */
+function kjp_mail_download_link(string $to, array $payment, string $linkExpire): bool
+{
+    global $config, $olang;
+
+    // the texts are encoded by send_mail(), and the name of the file is HTML encoded already in the database
+    $blocks = [
+        ['type' => 'text', 'content' => $olang['KJP_MAIL_THANKS']],
+        [
+            'type' => 'text',
+            'content' => implode("\n", [
+                $olang['KJP_FILE_NAME'] . ': ' . $payment['item_name'],
+                $olang['KJP_PAY_AMNT'] . ': ' . $payment['payment_amount'] . ' ' . $payment['payment_currency'],
+                $olang['KJP_PAY_MTHD'] . ': ' . kjp_method_title((string) $payment['payment_method']),
+                $olang['KJP_PAY_ID'] . ': ' . (int) $payment['id'],
+            ]),
+        ],
+        ['type' => 'button', 'link' => kjp_down_link($payment), 'label' => $olang['KJP_MAIL_DOWNLOAD']],
+        // a link that expires works only with the cookie of the browser that paid, see kjp_has_download_access()
+        [
+            'type' => 'alert',
+            'content' => kjp_link_lifetime()
+                ? sprintf($olang['KJP_MAIL_EXPIRE'], $linkExpire)
+                : $olang['KJP_MAIL_NO_EXPIRE'],
+        ],
+    ];
+
+    $subject = sprintf($olang['KJP_MAIL_SUBJECT'], html_entity_decode($payment['item_name'], ENT_QUOTES, 'UTF-8'));
+
+    return send_mail($to, $blocks, $subject, $config['sitemail'], $config['sitename']);
+}
+
+/**
  * time of a payment from its date columns
  *
  * @param  array $payment
@@ -886,14 +944,7 @@ function kjp_apply_payment(array $payment): array
         $toGlobal['groupName'] = $payment['item_name'];
     } elseif ($action == 'buy_file') {
         $toGlobal['file_name'] = $payment['item_name'];
-        $toGlobal['down_link'] =
-            $config['siteurl'] .
-            'do.php?downPaidFile=' .
-            $item_id .
-            '_' .
-            (int) $payment['id'] .
-            '_' .
-            $payment['payment_token'];
+        $toGlobal['down_link'] = kjp_down_link($payment);
 
         // becuse the payment is successfuly , let's give some profits to the file owner
         $file = getFileInfo($item_id, 'user');

@@ -481,18 +481,9 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                     if ($has_page) {
                         $olang['KJP_DOWN_INFO_2'] = $olang['KJP_DOWN_INFO_3'];
                     } elseif ($mail !== '') {
-                        // the method support email
-                        $mailer = send_mail(
-                            $mail,
-                            str_replace(
-                                ['@fileName', '@downLink', '@linkExpire'],
-                                [htmlspecialchars_decode($vars['file_name'], ENT_QUOTES), $vars['down_link'], $linkExpire],
-                                $olang['KJP_MAIL_TPL'],
-                            ),
-                            'kleeja Payment Download Link',
-                            $config['sitemail'],
-                            $config['sitename'],
-                        );
+                        // the method support email, the mail shows the amount and the method, which are in the row only
+                        $row = getPaymentInfo($payment['db_id']);
+                        $mailer = $row && kjp_mail_download_link($mail, $row, $linkExpire);
                     }
 
                     if ($mailer) {
@@ -596,28 +587,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                     kleeja_err($lang['WRONG_EMAIL'], '', true, $FormAction, 2);
                 }
 
-                $downloadLink =
-                    $config['siteurl'] .
-                    'do.php?downPaidFile=' .
-                    (int) $payment['item_id'] .
-                    '_' .
-                    (int) $payment['id'] .
-                    '_' .
-                    $payment['payment_token'];
-
-                $mailer = send_mail(
-                    $mailAdress,
-                    str_replace(
-                        ['@fileName', '@downLink', '@linkExpire'],
-                        [htmlspecialchars_decode($fileName, ENT_QUOTES), $downloadLink, $linkExpire],
-                        $olang['KJP_MAIL_TPL'],
-                    ),
-                    'kleeja Payment Download Link',
-                    $config['sitemail'],
-                    $config['sitename'],
-                );
-
-                if (! $mailer) {
+                if (! kjp_mail_download_link($mailAdress, $payment, $linkExpire)) {
                     kleeja_err($olang['KJP_ERR_SND_MIL'], '', true, $FormAction, 3);
                 }
 
@@ -894,14 +864,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                     'FILE' => $pay['item_name'],
                     'AMOUNT' => $pay['payment_amount'] . ' ' . $pay['payment_currency'],
                     'DATE_TIME' => "{$pay['payment_year']}-{$pay['payment_month']}-{$pay['payment_day']} / {$pay['payment_time']}",
-                    'DOWN_LINK' =>
-                        $config['siteurl'] .
-                        'do.php?downPaidFile=' .
-                        $pay['item_id'] .
-                        '_' .
-                        $pay['id'] .
-                        '_' .
-                        $pay['payment_token'],
+                    'DOWN_LINK' => kjp_down_link($pay),
                 ];
             }
 

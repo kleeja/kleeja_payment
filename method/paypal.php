@@ -31,7 +31,7 @@ class kjPayMethod_paypal implements KJPaymentMethod
 {
     private $client; // client id and cliend secret , we need it to create payment and checking it
     private $accessToken = null; // for the calls that the library of PayPal does not have
-    private $currency;
+    private string $currency;
     private $successPayment = false; // its return the payment state after checking it
     private $varsForCreate = []; // some methods will work in kleeja without leaving the website
     private $toGlobal = []; // the list of vars that we want to export it to kleeja

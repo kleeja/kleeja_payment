@@ -11,7 +11,7 @@ if (! defined('IN_PLUGINS_SYSTEM')) {
 
 class kjPayMethod_balance implements KJPaymentMethod
 {
-    private $currency;
+    private string $currency;
     private $successPayment = false; // its return the payment state after checking it
     private $varsForCreate = []; // some methods will work in kleeja without leaving the website
     private $toGlobal = []; // the list of vars that we want to export it to kleeja

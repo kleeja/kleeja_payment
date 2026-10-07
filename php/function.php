@@ -456,9 +456,7 @@ function create_Archive_Panel($action, $actionInfo, $isForAll = false)
             ' <span class="kj-badge is-neutral">' .
             $counts['num'] .
             '</span></span><span dir="ltr">' .
-            $counts['amount'] .
-            ' ' .
-            $config['kjp_iso_currency_code'] .
+            kjp_price($counts['amount'], strtoupper($config['kjp_iso_currency_code'])) .
             '</span></li>';
     }
 
@@ -608,6 +606,21 @@ function kjp_method_title(string $method): string
 }
 
 /**
+ * a price, an amount or a balance as it is shown, always with two decimals (9 is 9.00),
+ * the FLOAT columns give 9 or 9.9899997711182, and it goes in the inputs of the prices too
+ *
+ * @param  mixed  $amount
+ * @param  string $currency added after the amount when it is given
+ * @return string
+ */
+function kjp_price($amount, string $currency = ''): string
+{
+    $price = number_format((float) $amount, 2, '.', '');
+
+    return $currency === '' ? $price : $price . ' ' . $currency;
+}
+
+/**
  * seconds that a download link lives, 0 when it never expires
  *
  * @return int
@@ -657,7 +670,7 @@ function kjp_mail_download_link(string $to, array $payment, string $linkExpire):
             'type' => 'text',
             'content' => implode("\n", [
                 $olang['KJP_FILE_NAME'] . ': ' . $payment['item_name'],
-                $olang['KJP_PAY_AMNT'] . ': ' . $payment['payment_amount'] . ' ' . $payment['payment_currency'],
+                $olang['KJP_PAY_AMNT'] . ': ' . kjp_price($payment['payment_amount'], $payment['payment_currency']),
                 $olang['KJP_PAY_MTHD'] . ': ' . kjp_method_title((string) $payment['payment_method']),
                 $olang['KJP_PAY_ID'] . ': ' . (int) $payment['id'],
             ]),

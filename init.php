@@ -542,6 +542,12 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
             $FormAction = $config['siteurl'] . 'go.php?go=paid_group';
             $PaidGroups = getGroupInfo($args['d_groups']) ?: [];
 
+            foreach ($PaidGroups as &$group) {
+                $group['price'] = kjp_price($group['price']);
+            }
+
+            unset($group);
+
             return compact('no_request', 'titlee', 'stylee', 'styleePath', 'PaidGroups', 'MethodOption', 'FormAction');
         }
 
@@ -639,7 +645,11 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
             $no_request = false;
             $stylee = 'subscripe';
             $styleePath = kjp_template_path('subscripe');
-            $subscripe_list = array_values($subscription->get());
+            $subscripe_list = [];
+
+            foreach ($subscription->get() as $package) {
+                $subscripe_list[] = ['price' => kjp_price($package['price'])] + $package;
+            }
             $MethodOption = '';
             $form_key = kleeja_add_form_key('subscription');
 
@@ -862,7 +872,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                 $myPayments[] = [
                     'ID' => $pay['id'],
                     'FILE' => $pay['item_name'],
-                    'AMOUNT' => $pay['payment_amount'] . ' ' . $pay['payment_currency'],
+                    'AMOUNT' => kjp_price($pay['payment_amount'], $pay['payment_currency']),
                     'DATE_TIME' => "{$pay['payment_year']}-{$pay['payment_month']}-{$pay['payment_day']} / {$pay['payment_time']}",
                     'DOWN_LINK' => kjp_down_link($pay),
                 ];
@@ -904,7 +914,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                     'ID' => $row['id'],
                     'METHOD' => kjp_method_title($row['payment_method']),
                     'FILE_NAME' => $row['item_name'],
-                    'AMOUNT' => $row['payment_amount'] . ' ' . $row['payment_currency'],
+                    'AMOUNT' => kjp_price($row['payment_amount'], $row['payment_currency']),
                     'ACTION' => kjp_action_title($row['payment_action'], $row['item_name']),
                     'DATE_TIME' => "{$row['payment_year']}-{$row['payment_month']}-{$row['payment_day']} / {$row['payment_time']}",
                 ];
@@ -982,7 +992,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
             ) {
                 kleeja_err($olang['KJP_WRONG_PASS'], '', true, $action, 3);
             } elseif ($min_limit > 0 && $requestAmount < $min_limit) {
-                kleeja_err(sprintf($olang['KJP_MIN_POUT_LMT'], $min_limit, $currency), '', true, $action, 3);
+                kleeja_err(sprintf($olang['KJP_MIN_POUT_LMT'], kjp_price($min_limit), $currency), '', true, $action, 3);
             }
             // the password was correct , is he really have this amount in hes balance
             // it is taken only when the balance covers it, in one query
@@ -1017,7 +1027,11 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
             $new_balance = $usrcp->get_data('balance');
 
             kleeja_info(
-                sprintf($olang['KJP_SUCES_SND_WTHD'], $requestAmount, (float) $new_balance['balance']),
+                sprintf(
+                    $olang['KJP_SUCES_SND_WTHD'],
+                    kjp_price($requestAmount, $currency),
+                    kjp_price($new_balance['balance'], $currency),
+                ),
                 '',
                 true,
                 $action . '&amp;case=withdrawals',
@@ -1040,7 +1054,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                 $payouts[] = [
                     'ID' => $row['id'],
                     'METHOD' => kjp_method_title($row['method']),
-                    'AMOUNT' => $row['amount'] . ' ' . $currency,
+                    'AMOUNT' => kjp_price($row['amount'], $currency),
                     'DATE_TIME' => "{$row['payout_year']}-{$row['payout_month']}-{$row['payout_day']} / {$row['payout_time']}",
                     'STATE_LANG' => $olang['KJP_POUT_ST_' . strtoupper($row['state'])] ?? $row['state'],
                     'STATE' => $row['state'],
@@ -1116,7 +1130,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                     $FileName = $file_info['name'];
                     $FileSize = readable_size((int) $file_info['size']);
                     $FileUser = $usrcp->name();
-                    $FilePrice = (float) $file_info['price'];
+                    $FilePrice = kjp_price($file_info['price']);
                 } else {
                     $OpenAlert = true;
                     $AlertMsg = $olang['KJP_NO_FILE_WITH_ID'] . ' ' . (int) $select_file_id;
@@ -1134,8 +1148,8 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                     kleeja_err(
                         sprintf(
                             $olang['KJP_PRC_LMT'],
-                            $config['kjp_min_price_limit'],
-                            $config['kjp_max_price_limit'],
+                            kjp_price($config['kjp_min_price_limit']),
+                            kjp_price($config['kjp_max_price_limit']),
                             $currency,
                         ),
                         '',
@@ -1157,7 +1171,12 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                         'BIND' => ['price' => $FilePrice, 'id' => $FileID, 'user' => $user_id],
                     ]);
 
-                    $AlertMsg = sprintf($olang['KJP_NO_FILE_NEW_PRICE'], $file_info['name'], $FilePrice, $currency);
+                    $AlertMsg = sprintf(
+                        $olang['KJP_NO_FILE_NEW_PRICE'],
+                        $file_info['name'],
+                        kjp_price($FilePrice),
+                        $currency,
+                    );
                     $AlertRole = 'success';
                 } else {
                     $AlertMsg = $olang['KJP_NO_FILE_WITH_ID'] . ' ' . $FileID;
@@ -1180,7 +1199,7 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
                 $all_paid_file[] = [
                     'id' => $paid_file['id'],
                     'name' => $paid_file['real_filename'],
-                    'price' => $paid_file['price'] . ' ' . $currency,
+                    'price' => kjp_price($paid_file['price'], $currency),
                     'link' => $config['siteurl'] . 'do.php?id=' . $paid_file['id'],
                 ];
             }
@@ -1189,10 +1208,10 @@ $kleeja_plugin['kleeja_payment']['functions'] = [
         }
 
         // to have it fresh
-        $user_balance = (float) $userData['balance'] . ' ' . $currency;
+        $user_balance = kjp_price($userData['balance'], $currency);
         $user_subs_points = $userData['subs_point'];
-        $min_price = $config['kjp_min_price_limit'];
-        $max_price = $config['kjp_max_price_limit'];
+        $min_price = kjp_price($config['kjp_min_price_limit']);
+        $max_price = kjp_price($config['kjp_max_price_limit']);
         $withdraw_form_key = kleeja_add_form_key('kjp_withdraw');
         $price_form_key = kleeja_add_form_key('kjp_price');
 

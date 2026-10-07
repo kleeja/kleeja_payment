@@ -57,7 +57,7 @@ if ($SQL->num_rows($result) != 0) {
     $size = $file_info['size'];
     $time = $file_info['time'];
     $uploads = $file_info['uploads'];
-    $price = (float) $file_info['price']; // edited
+    $price = kjp_price($file_info['price']); // edited
 
     // edited -> the names are saved encoded, they are not encoded again
     $name = $real_filename != '' ? str_replace('.' . $type, '', $real_filename) : $name;

@@ -64,7 +64,7 @@ class kjPayMethod_balance implements KJPaymentMethod
         $this->varsForCreate['itemName'] = $info['name'];
         $this->varsForCreate['payAction'] = kjp_action_title($do, (string) $info['name']);
         $this->varsForCreate['paymentCurrency'] = $this->currency;
-        $this->varsForCreate['itemPrice'] = $info['price'] . ' ' . $this->currency;
+        $this->varsForCreate['itemPrice'] = kjp_price($info['price'], $this->currency);
         $this->varsForCreate['kjFormKeyPost'] = kleeja_add_form_key($form_name);
     }
 

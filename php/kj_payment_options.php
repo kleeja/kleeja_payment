@@ -80,9 +80,7 @@ if (empty($current_smt)) {
                 'htmlContent' =>
                     ($method == 'paypal' ? $olang['KJP_NT_PRFIT'] . ' : ' : '') .
                     '<span dir="ltr">' .
-                    round($totals['amount'], 2) .
-                    ' ' .
-                    $currency .
+                    kjp_price($totals['amount'], $currency) .
                     '</span>',
             ];
         }
@@ -246,7 +244,7 @@ if (empty($current_smt)) {
             'PayUser' => $trnc['user'] > 0 ? $UserById[$trnc['user']] ?? $trnc['user'] : $olang['KJP_GUEST'],
             'PayAction' => kjp_action_title($trnc['payment_action'], $trnc['item_name']),
             'PayDateTime' => "{$trnc['payment_year']}-{$trnc['payment_month']}-{$trnc['payment_day']} / {$trnc['payment_time']}",
-            'PayAmount' => $trnc['payment_amount'] . ' ' . $trnc['payment_currency'],
+            'PayAmount' => kjp_price($trnc['payment_amount'], $trnc['payment_currency']),
             'PayMethod' => kjp_method_title((string) $trnc['payment_method']),
             'view_link' => $page_url . '&amp;smt=view&amp;payment=' . $trnc['id'],
         ];
@@ -262,7 +260,7 @@ if (empty($current_smt)) {
     $have_payment = (bool) $PayInfo;
 
     if ($PayInfo) {
-        $amount = $PayInfo['payment_amount'] . ' ' . $PayInfo['payment_currency'];
+        $amount = kjp_price($PayInfo['payment_amount'], $PayInfo['payment_currency']);
         $token = $PayInfo['payment_token'];
         $payment_method = kjp_method_title((string) $PayInfo['payment_method']);
         $payer_ip = $PayInfo['payment_payer_ip'];
@@ -320,7 +318,10 @@ if (empty($current_smt)) {
             $viewMoreTable[] = [
                 'tableName' => $olang['KJP_VIW_TPL_' . strtoupper($key)] ?? strtoupper(kleeja_html_encode($key)),
                 // they come from the payment providers, old ones were saved as they came
-                'tableValue' => kleeja_html_encode(htmlspecialchars_decode((string) $value, ENT_QUOTES)),
+                'tableValue' =>
+                    $key == 'paypal_payment_fees' && is_numeric($value)
+                        ? kjp_price($value, $PayInfo['payment_currency'])
+                        : kleeja_html_encode(htmlspecialchars_decode((string) $value, ENT_QUOTES)),
             ];
         }
     }
@@ -351,7 +352,7 @@ if (empty($current_smt)) {
             $FileName = $file_info['name'];
             $FileSize = readable_size((int) $file_info['size']);
             $FileUser = $file_info['user'] > 0 ? $UserById[$file_info['user']] ?? $file_info['user'] : $olang['KJP_GUEST'];
-            $FilePrice = (float) $file_info['price'];
+            $FilePrice = kjp_price($file_info['price']);
         } else {
             $OpenAlert = true;
             $AlertMsg = $olang['KJP_NO_FILE_WITH_ID'] . ' ' . (int) $select_file_id;
@@ -375,7 +376,7 @@ if (empty($current_smt)) {
                 'BIND' => ['price' => $FilePrice, 'id' => $FileID],
             ]);
 
-            $AlertMsg = sprintf($olang['KJP_NO_FILE_NEW_PRICE'], $file_info['name'], $FilePrice, $currency);
+            $AlertMsg = sprintf($olang['KJP_NO_FILE_NEW_PRICE'], $file_info['name'], kjp_price($FilePrice), $currency);
             $AlertRole = 'success';
         } else {
             $AlertMsg = $olang['KJP_NO_FILE_WITH_ID'] . ' ' . $FileID;
@@ -403,7 +404,7 @@ if (empty($current_smt)) {
             'id' => $paid_file['id'],
             'name' => $paid_file['real_filename'],
             'user' => $paid_file['user'] > 0 ? $UserById[$paid_file['user']] ?? $paid_file['user'] : $olang['KJP_GUEST'],
-            'price' => $paid_file['price'] . ' ' . $currency,
+            'price' => kjp_price($paid_file['price'], $currency),
             'link' => $config['siteurl'] . 'do.php?id=' . $paid_file['id'],
         ];
     }
@@ -466,7 +467,7 @@ if (empty($current_smt)) {
         $payouts[] = [
             'ID' => $row['id'],
             'METHOD' => kjp_method_title($row['method']),
-            'AMOUNT' => $row['amount'] . ' ' . $currency,
+            'AMOUNT' => kjp_price($row['amount'], $currency),
             'DATE_TIME' => "{$row['payout_year']}-{$row['payout_month']}-{$row['payout_day']} / {$row['payout_time']}",
             'STATE' => $olang['KJP_POUT_ST_' . strtoupper($row['state'])] ?? $row['state'],
             'PayoutUser' => $UserById[$row['user']] ?? $row['user'],
@@ -506,7 +507,10 @@ if (empty($current_smt)) {
                 kjp_give_balance((int) $pOutInfo['user'], (float) $pOutInfo['amount']);
             }
 
-            kleeja_admin_info(sprintf($olang['KJP_CNCLD_POUT'], $pOutInfo['amount']), $FormAction);
+            kleeja_admin_info(
+                sprintf($olang['KJP_CNCLD_POUT'], kjp_price($pOutInfo['amount'], $currency)),
+                $FormAction,
+            );
         }
         // the admin accept sending this amount to user
         elseif ($pOutInfo && ip('sendPayout') && ! ip('cancelPayout')) {
@@ -538,7 +542,10 @@ if (empty($current_smt)) {
             $PAY->createPayout($pOutInfo); // send all payout data to the class
 
             if ($PAY->isSuccess()) {
-                kleeja_admin_info(sprintf($olang['KJP_SUCS_POUT'], $pOutInfo['amount']), $FormAction);
+                kleeja_admin_info(
+                    sprintf($olang['KJP_SUCS_POUT'], kjp_price($pOutInfo['amount'], $currency)),
+                    $FormAction,
+                );
             }
 
             // the reason stays on the screen, the request is still in the list
@@ -564,7 +571,7 @@ if (empty($current_smt)) {
 
     while ($result && ($payout = $SQL->fetch_array($result))) {
         $payout_user = $UserById[$payout['user']] ?? $payout['user'];
-        $payout_amount = $payout['amount'] . ' ' . $currency;
+        $payout_amount = kjp_price($payout['amount'], $currency);
 
         $payouts[] = [
             'ID' => $payout['id'],
@@ -648,7 +655,7 @@ if (empty($current_smt)) {
         $payout_id = $payoutInfo['id'];
         $payout_user = $UserById[$payoutInfo['user']] ?? $payoutInfo['user'];
         $payout_method = kjp_method_title($payoutInfo['method']);
-        $payout_amount = $payoutInfo['amount'] . ' ' . $currency;
+        $payout_amount = kjp_price($payoutInfo['amount'], $currency);
         $payout_date_time =
             $payoutInfo['payout_year'] .
             '-' .
@@ -666,7 +673,10 @@ if (empty($current_smt)) {
         foreach (payment_more_info('from_db', ['payment_more_info' => $payoutInfo['payment_more_info']]) as $key => $value) {
             $viewMoreTable[] = [
                 'tableName' => $olang['KJP_VIW_TPL_' . strtoupper($key)] ?? strtoupper(kleeja_html_encode($key)),
-                'tableValue' => kleeja_html_encode(htmlspecialchars_decode((string) $value, ENT_QUOTES)),
+                'tableValue' =>
+                    $key == 'transaction_fees' && is_numeric($value)
+                        ? kjp_price($value, $currency)
+                        : kleeja_html_encode(htmlspecialchars_decode((string) $value, ENT_QUOTES)),
             ];
         }
     }
@@ -732,7 +742,7 @@ if (empty($current_smt)) {
                     'ID' => $subs['id'],
                     'NAME' => $subs['name'],
                     'DAYS' => $subs['days'],
-                    'PRICE' => $subs['price'],
+                    'PRICE' => kjp_price($subs['price']),
                     'LINK' => $action . '&amp;case=view&amp;pack=' . $subs['id'],
                 ];
             }
@@ -791,6 +801,7 @@ if (empty($current_smt)) {
             }
 
             $packContent['MembersCount'] = $subscription->getMembersCount($package);
+            $packContent['price'] = kjp_price($packContent['price']);
 
             break;
 
@@ -819,7 +830,7 @@ if (empty($current_smt)) {
                     'SUBSCRIPER_LINK' => $config['siteurl'] . 'ucp.php?go=fileuser&amp;id=' . $subs['user'],
                     'PACKAGE' => $subs['item_name'],
                     'PACKAGE_LINK' => $action . '&amp;case=view&amp;pack=' . $subs['item_id'],
-                    'PRICE' => $subs['payment_amount'] . ' ' . $subs['payment_currency'],
+                    'PRICE' => kjp_price($subs['payment_amount'], $subs['payment_currency']),
                     'SUBSCRIBE_AT' => date('Y.m.d | H:i', $subscribed_at),
                     'EXPIRE_AT' => $expire ? date('Y.m.d | H:i', $expire) : $olang['KJP_EXPIRED'],
                 ];
@@ -856,7 +867,7 @@ if (empty($current_smt)) {
                 $cancelPayment['user'] > 0
                     ? $UserById[$cancelPayment['user']] ?? $cancelPayment['user']
                     : $olang['KJP_GUEST'],
-            'PRICE' => $cancelPayment['payment_amount'] . ' ' . $cancelPayment['payment_currency'],
+            'PRICE' => kjp_price($cancelPayment['payment_amount'], $cancelPayment['payment_currency']),
             'PayDateTime' => kleeja_date($canceled_at),
             'Time' => date('Y.m.d | H:i', $canceled_at),
         ];

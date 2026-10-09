@@ -6,6 +6,11 @@
  * #made_with_love_for_kleeja
  */
 
+// prevent illegal run
+if (! defined('IN_PLUGINS_SYSTEM')) {
+    exit;
+}
+
 interface KJPaymentMethod
 {
     /**
@@ -14,14 +19,12 @@ interface KJPaymentMethod
      */
     public function paymentStart();
 
-
     /**
      * i will give to you the currency that we work with it ,
      * @param string $currency
      * @return void
      */
     public function setCurrency(string $currency);
-
 
     /**
      * Creating a Payments for any action you want
@@ -32,28 +35,26 @@ interface KJPaymentMethod
      */
     public function CreatePayment(string $do, array $info);
 
-
     /**
      * this function is called after calling create payment function
      * it ruturn all variable that kleeja need to know about it,
-     * like some information that you want to give it to the template, because some method are connecting to its payment server via JS, like Stripe
+     * like some information that you want to give it to the template, when the method has a page of its own in kleeja
      * @return array
      */
     public function varsForCreatePayment(): array;
 
-
     /**
-     * the payment is made, we need to check the status of payment, is it made successfuly or not
-     * and including the action of successful payment and failed payment
+     * the buyer is back from the payment, we need to check the status of payment with the server of the method,
+     * is it made successfuly or not, and including the action of successful payment and failed payment
      * @example: change the user group after making a payment for join a group
      * @example: make a subscription for the user after subscriping to in a package
+     * kjp_approve_payment() and kjp_apply_payment() do that for a payment that was added with kjp_insert_payment()
      * @return void
      */
     public function checkPayment();
 
-
     /**
-     * this function is called after checkPayment() & checkPayout() function 
+     * this function is called after checkPayment() & checkPayout() function
      * @example: after calling checkPayment function, we need to know the payment status, is it made successfuly or not
      * @return bool
      */
@@ -67,14 +68,12 @@ interface KJPaymentMethod
      */
     public function getGlobalVars(): array;
 
-
     /**
      * this function after successful payment, it's the email address that we need to send the payment invoices to it
      * email is not included in all payment method, and it's not required in all payments action, NOW we need it only for buy_file action
-     * @return string
+     * @return string an empty text when the method has no e-mail address, then the buyer is asked for it
      */
     public function linkMailer(): string;
-
 
     /**
      * a function to seding money to our members
@@ -87,7 +86,6 @@ interface KJPaymentMethod
      */
     public function createPayout(array $itemInfo);
 
-
     /**
      * in some cases, the payout need a time to be finished, then after creating a payout, and the payout status is sent,
      * & the admin request to check the payout status, then this function will be called.
@@ -95,7 +93,6 @@ interface KJPaymentMethod
      * @return void
      */
     public function checkPayout(array $payoutInfo);
-
 
     /**
      * for each payment method, there is some cases that's not included all feature,
@@ -107,7 +104,6 @@ interface KJPaymentMethod
      */
     public static function permission(string $permission): bool;
 }
-
 
 // Made with Love For Kleeja
 // Mitan :)

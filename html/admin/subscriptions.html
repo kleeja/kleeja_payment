@@ -1,169 +1,167 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-        <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-    </ol>
-</nav>
-<div class="card">
-    <div class="card-header">
-        <INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{olang.KJP_SUBSCRIPTIONS}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.KJP_SUBSCRIPTIONS}</h1>
     </div>
+    <div class="kj-page-actions">
+        <div class="btn-group btn-group-sm" role="group" aria-label="{olang.KJP_SUBSCRIPTIONS}">
+            <a class="btn btn-outline-secondary<IF NAME="case == subscriber"> active</IF>" href="{action}&amp;case=subscriber">{olang.KJP_SUBSCRIPER}</a>
+            <a class="btn btn-outline-secondary<IF NAME="case == subscription_list"> active</IF>" href="{action}&amp;case=subscription_list">{olang.KJP_SUBSCRIPTIONS_LIST}</a>
+        </div>
+        <a class="btn btn-primary btn-sm" href="{action}&amp;case=create">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i><span>{olang.KJP_CREATE_SUBSCRIPTIONS}</span>
+        </a>
+    </div>
+</div>
+
+<div class="card">
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+<div class="card-body">
+
+<IF NAME="case == create">
+
+<form method="post" action="{action}&amp;case=create" class="card">
     <div class="card-body">
-        <ul class="nav nav-pills mb-3">
-                <li class="nav-item">
-                        <a class="nav-link (case == subscriber?active:)"
-                            href="{action}&amp;case=subscriber">{olang.KJP_SUBSCRIPER}</a>
-                    </li>
-            <li class="nav-item">
-                <a class="nav-link (case == create?active:)" href="{action}&amp;case=create">{olang.KJP_CREATE_SUBSCRIPTIONS}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link (case == subscription_list?active:)"
-                    href="{action}&amp;case=subscription_list">{olang.KJP_SUBSCRIPTIONS_LIST}</a>
-            </li>
-        </ul>
-<hr>
-        <IF NAME="case == create">
-
-            <form method="POST" action="{action}&case=create">
-                <div class="form-group">
-                    {olang.KJP_ENTR_SUBSCRIP_NAME}
-                    <input type="text" class="form-control" name="subscription_name">
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label" for="kjpSubName">{olang.KJP_ENTR_SUBSCRIP_NAME}</label>
+                <input type="text" class="form-control" id="kjpSubName" name="subscription_name" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="kjpSubTime">{olang.KJP_ENTR_SUBSCRIP_TIME}</label>
+                <input type="number" class="form-control" id="kjpSubTime" name="subscription_time" dir="ltr" min="1" step="1" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="kjpSubPrice">{olang.KJP_ENTR_SUBSCRIP_PRICE}</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="kjpSubPrice" name="subscription_price" dir="ltr" min="0" step="0.01" required>
+                    <span class="input-group-text">{currency}</span>
                 </div>
-                <div class="form-group">
-                    {olang.KJP_ENTR_SUBSCRIP_TIME}
-                    <input type="text" class="form-control" name="subscription_time">
-                </div>
-                <div class="form-group">
-                    {olang.KJP_ENTR_SUBSCRIP_PRICE} ( {config.kjp_iso_currency_code} )
-                    <input type="number" class="form-control" name="subscription_price">
-                </div>
-
-                <button type="submit" name="create_subscription" class="btn btn-primary">{olang.KJP_CREATE_SUBSCRIPTIONS}</button>
-            </form>
-
-            <ELSEIF NAME="case == subscription_list">
-                        
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">{olang.KJP_ENTR_SUBSCRIP_NAME}</th>
-                                            <th scope="col">{olang.KJP_ENTR_SUBSCRIP_TIME}</th>
-                                            <th scope="col">{olang.KJP_ENTR_SUBSCRIP_PRICE}</th>
-                                            <th scope="col">{olang.KJP_ACTION}</th>
-                        
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        
-                                        <IF NAME="have_subscriptions == true">
-                        
-                                            <LOOP NAME="subscription">
-                                                <tr>
-                                                    <th scope="row">{{ID}}</th>
-                                                    <td>{{NAME}}</td>
-                                                    <td>{{DAYS}}</td>
-                                                    <td>{{PRICE}} {config.kjp_iso_currency_code}</td>
-                                                    <td>{{ACTION}}</td>
-                        
-                                                </tr>
-                        
-                                            </LOOP>
-                        
-                                            <ELSE>
-                        
-                                            <div class="alert alert-info" role="alert">
-                                                    {olang.KJP_NO_SUBSCRIP_FOUND}
-                                            </div>
-                        
-                                        </IF>
-                                    </tbody>
-                                </table>
-                                {page_nums}
-
-                                <ELSEIF NAME="case == subscriber">
-
-                                        <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">{olang.KJP_PAY_ID}</th>
-                                                        <th scope="col">{olang.KJP_SUBSCRIPER}</th>
-                                                        <th scope="col">{olang.KJP_ENTR_SUBSCRIP_NAME}</th>
-                                                        <th scope="col">{olang.KJP_PAY_MTHD}</th>
-                                                        <th scope="col">{olang.KJP_ENTR_SUBSCRIP_PRICE}</th>
-                                                        <th scope="col">{olang.KJP_DATE_TIME}</th>
-                                                        <th scope="col">{olang.KJP_SUBSCRIBE_EXPIRE}</th>
-                                    
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <IF NAME="have_subscriber == true">
-                                    
-                                                        <LOOP NAME="subscriber">
-                                                            <tr>
-                                                                <th scope="row">{{PAY_ID}}</th>
-                                                                <td>{{SUBSCRIPER}}</td>
-                                                                <td>{{PACKAGE}}</td>
-                                                                <td>{{PAY_METHOD}}</td>
-                                                                <td>{{PRICE}} {config.kjp_iso_currency_code}</td>
-                                                                <td>{{SUBSCRIBE_AT}}</td>
-                                                                <td>{{EXPIRE_AT}}</td>
-                                    
-                                                            </tr>
-                                    
-                                                        </LOOP>
-                                    
-                                                        <ELSE>
-                                    
-                                                        <div class="alert alert-info" role="alert">
-                                                                {olang.KJP_NO_SUBSCRIP_FOUND}
-                                                        </div>
-                                    
-                                                    </IF>
-                                                </tbody>
-                                            </table>
-                                            {page_nums}
-                                <ELSEIF NAME="case == view">
-
-                                        <table class="table">
-                                                <tbody>
-                                    
-                                                    <tr>
-                                                        <th scope="row">{olang.KJP_ENTR_SUBSCRIP_NAME}</th>
-                                                        <td>{packContent.name}</td>
-                                                    </tr>
-                                                    
-                                    
-                                                    <tr>
-                                                        <th scope="row">{olang.KJP_ENTR_SUBSCRIP_TIME}</th>
-                                                        <td>{packContent.days}</td>
-                                                    </tr>
-                                    
-                                                    <tr>
-                                                        <th scope="row">{olang.KJP_ENTR_SUBSCRIP_PRICE}</th>
-                                                        <td>{packContent.price} {config.kjp_iso_currency_code}</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th scope="row">{olang.KJP_SUBSCRIPER}</th>
-                                                        <td>{packContent.MembersCount} {olang.KJP_MEMBER}</td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-
-                                                <form action="{formAction}{kjFormKeyGet}" method="POST">
-                                                        {kjFormKeyPost}
-                                                    <input type="hidden" name="package_id" value="{packContent.id}">
-                                                    <input class="btn btn-danger" type="submit" name="delete_package" value="{olang.KJP_DELETE_PACK}">
-                                                </form>
-                                                <p>{olang.KJP_PACK_DELETE_NOTE}</p>
-        </IF>
-
-
-
-
+            </div>
         </div>
     </div>
+    <div class="card-footer kj-form-actions">
+        <button type="submit" name="create_subscription" value="1" class="btn btn-primary">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i><span>{olang.KJP_CREATE_SUBSCRIPTIONS}</span>
+        </button>
+    </div>
+
+    {H_FORM_KEYS}
+</form>
+
+<ELSEIF NAME="case == subscription_list">
+
+<div class="card">
+    <IF NAME="have_subscriptions">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 4rem">#</th>
+                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_NAME}</th>
+                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_TIME}</th>
+                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_PRICE}</th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">{olang.KJP_VIEW}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="subscriptions_list">
+                <tr>
+                    <td class="text-body-secondary">{{ID}}</td>
+                    <td class="fw-semibold">{{NAME}}</td>
+                    <td>{{DAYS}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{PRICE}} {currency}</td>
+                    <td class="text-end">
+                        <a href="{{LINK}}" class="btn btn-sm btn-outline-secondary" title="{olang.KJP_VIEW}">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i><span class="visually-hidden">{olang.KJP_VIEW}</span>
+                        </a>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-star" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_SUBSCRIP_FOUND}</p>
+    </div>
+    </IF>
+</div>
+
+<div class="kj-pager mt-3">{page_nums}</div>
+
+<ELSEIF NAME="case == view">
+
+<div class="card mb-4">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item kj-kv"><span>{olang.KJP_ENTR_SUBSCRIP_NAME}</span><span>{packContent.name}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_ENTR_SUBSCRIP_TIME}</span><span>{packContent.days}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_ENTR_SUBSCRIP_PRICE}</span><span dir="ltr">{packContent.price} {currency}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_SUBSCRIPER}</span><span>{packContent.MembersCount}</span></li>
+    </ul>
+</div>
+
+<form method="post" action="{formAction}{kjFormKeyGet}" class="card border-danger-subtle">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <p class="text-body-secondary mb-0">{olang.KJP_PACK_DELETE_NOTE}</p>
+        <input type="hidden" name="package_id" value="{packContent.id}">
+        {kjFormKeyPost}
+        <button type="submit" name="delete_package" value="1" class="btn btn-outline-danger btn-sm" data-kj-confirm>
+            <i class="fa-solid fa-trash-can" aria-hidden="true"></i><span>{olang.KJP_DELETE_PACK}</span>
+        </button>
+    </div>
+</form>
+
+<ELSE>
+
+<div class="card">
+    <IF NAME="have_subscriber">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 4rem">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{olang.KJP_SUBSCRIPER}</th>
+                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_NAME}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_ENTR_SUBSCRIP_PRICE}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col">{olang.KJP_SUBSCRIBE_EXPIRE}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="subscriber">
+                <tr>
+                    <td><a href="{{PAY_LINK}}">{{PAY_ID}}</a></td>
+                    <td class="fw-semibold"><a href="{{SUBSCRIPER_LINK}}" target="_blank" rel="noopener">{{SUBSCRIPER}}</a></td>
+                    <td><a href="{{PACKAGE_LINK}}">{{PACKAGE}}</a></td>
+                    <td>{{PAY_METHOD}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{PRICE}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{SUBSCRIBE_AT}}</td>
+                    <td class="text-nowrap" dir="ltr" style="text-align: start">{{EXPIRE_AT}}</td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+    <ELSE>
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_SUBSCRIP_FOUND}</p>
+    </div>
+    </IF>
+</div>
+
+<div class="kj-pager mt-3">{page_nums}</div>
+
+</IF>
+
+</div>
+</div>

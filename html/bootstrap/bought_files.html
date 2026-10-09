@@ -1,0 +1,56 @@
+<IF NAME="is_style_supported">
+
+<div class="d-flex align-items-center gap-3 mb-4">
+    <span class="icon-box rounded-3 bg-primary-subtle text-primary-emphasis"><i class="fa-solid fa-bag-shopping"></i></span>
+    <div>
+        <h1 class="h3 fw-bold mb-0">{title}</h1>
+    </div>
+</div>
+
+<IF NAME="havePayments">
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{lang.FILENAME}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">{lang.DOWNLAOD}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="myPayments">
+                <tr>
+                    <th scope="row" class="text-body-secondary fw-normal">{{ID}}</th>
+                    <td class="fw-semibold text-break">{{FILE}}</td>
+                    <td class="text-nowrap"><bdi>{{AMOUNT}}</bdi></td>
+                    <td class="text-nowrap" dir="ltr">{{DATE_TIME}}</td>
+                    <td class="text-end">
+                        <a href="{{DOWN_LINK}}" class="btn btn-primary btn-sm text-nowrap"><i class="fa-solid fa-download me-1"></i>{lang.DOWNLAOD}</a>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="d-flex justify-content-center mt-4" aria-label="pagination">{page_nums}</nav>
+
+<ELSE>
+
+<div class="card shadow-sm text-center">
+    <div class="card-body p-5">
+        <span class="icon-box icon-box-lg rounded-circle bg-body-tertiary text-body-secondary mb-3"><i class="fa-solid fa-bag-shopping"></i></span>
+        <p class="lead text-body-secondary mb-0">{olang.KJP_NO_BOUGHT_FILES}</p>
+    </div>
+</div>
+
+</IF>
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

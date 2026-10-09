@@ -1,0 +1,55 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Paid groups template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{title}</h1>
+    <p class="title-note">{olang.KJP_GRP_INFO} <a href="{config.siteurl}(config.mod_writer?guide.html:go.php?go=guide)">{lang.GUIDE}</a></p>
+    <!-- @end-title -->
+
+    <IF NAME="PaidGroups">
+
+    <div class="kjp-plans">
+        <LOOP NAME="PaidGroups">
+        <section class="box">
+            <h2 class="box-title box-title-sky">{{name}}</h2>
+            <div class="box-body">
+                <span class="kjp-label">{olang.KJP_JOIN_PRICE}</span>
+                <div class="kjp-price"><bdi>{{price}} {config.kjp_iso_currency_code}</bdi></div>
+
+                <form action="{FormAction}" method="post">
+                    <input type="hidden" name="group_id" value="{{id}}">
+                    <div class="field">
+                        <label for="kjp-method-{{id}}">{olang.KJP_PAY_MTHD}</label>
+                        <div class="input-group">
+                            <select id="kjp-method-{{id}}" name="method">
+                                {MethodOption}
+                            </select>
+                            <button type="submit" name="join_grp" value="1" class="btn btn-primary">{olang.KJP_JUIN}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        </LOOP>
+    </div>
+
+    <ELSE>
+
+    <!-- no paid groups -->
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{lang.NOTHING}</h2>
+    </div>
+    <!-- @end-no-paid-groups -->
+
+    </IF>
+
+</div>
+<!-- @end-Paid-groups -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

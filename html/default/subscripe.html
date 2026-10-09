@@ -1,0 +1,55 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Subscriptions template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{title}</h1>
+    <!-- @end-title -->
+
+    <IF NAME="subscripe_list">
+
+    <div class="kjp-plans">
+        <LOOP NAME="subscripe_list">
+        <section class="box">
+            <h2 class="box-title box-title-sky">{{name}}</h2>
+            <div class="box-body">
+                <div class="kjp-price"><bdi>{{price}} {config.kjp_iso_currency_code}</bdi></div>
+                <span class="kjp-label">{olang.KJP_ENTR_SUBSCRIP_TIME}: {{days}}</span>
+
+                <form action="{FormAction}" method="post">
+                    {form_key}
+                    <input type="hidden" name="subscripe_id" value="{{id}}">
+                    <div class="field">
+                        <label for="kjp-method-{{id}}">{olang.KJP_PAY_MTHD}</label>
+                        <div class="input-group">
+                            <select id="kjp-method-{{id}}" name="Pay_method">
+                                {MethodOption}
+                            </select>
+                            <button type="submit" name="subscripe_now" value="1" class="btn btn-primary">{olang.KJP_SUBSCRIPE}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        </LOOP>
+    </div>
+
+    <ELSE>
+
+    <!-- no subscriptions -->
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{olang.KJP_NO_SUBSCRIP_FOUND}</h2>
+    </div>
+    <!-- @end-no-subscriptions -->
+
+    </IF>
+
+</div>
+<!-- @end-Subscriptions -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

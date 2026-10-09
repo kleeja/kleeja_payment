@@ -1,0 +1,33 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- Pay by balance template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{olang.KJP_PY_4}</h1>
+    <!-- @end-title -->
+
+    <div class="box kjp-panel">
+        <h2 class="box-title box-title-sky">{olang.KJP_MTHD_NAME_BALANCE}</h2>
+        <div class="box-body">
+            <img src="{STYLE_PATH}images/boxfileuser.png" width="64" height="64" alt="">
+            <p dir="auto">{payAction}</p>
+            <span class="kjp-label">{olang.KJP_PRC}</span>
+            <div class="kjp-price"><bdi>{itemPrice}</bdi></div>
+
+            <form method="post" action="{FormAction}">
+                {kjFormKeyPost}
+                <button type="submit" name="buy_item" value="1" class="btn btn-primary btn-lg">
+                    <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>{olang.KJP_BUY}
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+<!-- @end-Pay-by-balance -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

@@ -1,0 +1,60 @@
+<IF NAME="is_style_supported">
+<link rel="stylesheet" href="{config.siteurl}plugins/kleeja_payment/html/default/kj_payment.css">
+
+<!-- My payments template -->
+<div id="content">
+
+    <!-- title -->
+    <h1 class="title">{title}</h1>
+    <!-- @end-title -->
+
+    <IF NAME="havePayments">
+
+    <div class="box kjp-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{olang.KJP_ACTION}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payments">
+                <tr>
+                    <th scope="row">{{ID}}</th>
+                    <td class="kjp-name" dir="auto">{{ACTION}}</td>
+                    <td>{{METHOD}}</td>
+                    <td class="kjp-nowrap"><bdi>{{AMOUNT}}</bdi></td>
+                    <td class="kjp-nowrap"><bdi dir="ltr">{{DATE_TIME}}</bdi></td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+
+    <IF NAME="page_nums">
+    <!-- pagination -->
+    <div class="pager">{page_nums}</div>
+    <!-- @end-pagination -->
+    </IF>
+
+    <ELSE>
+
+    <!-- no payments -->
+    <div class="nofiles">
+        <img src="{STYLE_PATH}images/warning_nofile.png" width="128" height="128" alt="">
+        <h2>{olang.KJP_NO_TRNC}</h2>
+    </div>
+    <!-- @end-no-payments -->
+
+    </IF>
+
+</div>
+<!-- @end-My-payments -->
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

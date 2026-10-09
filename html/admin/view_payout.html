@@ -1,73 +1,58 @@
-<nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
-          <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
-          <li class="breadcrumb-item active" aria-current="page">View Payout ( {poutID} )</li>
-        </ol>
-      </nav>
-      <div class="card" style="margin: 20px;">
-        <div class="card-body">
-      <IF NAME="have_payout">
-      
-      
-      <table class="table">
-      
-        <tbody>
-          <tr>
-            <th scope="row">{olang.KJP_POUT_ID} </th>
-            <td>{payout_id}</td>
-          </tr>
+<div class="kj-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options">{olang.R_KJ_PAYMENT_OPTIONS}</a></li>
+                <li class="breadcrumb-item"><a href="./?cp=kj_payment_options&amp;smt=payouts&amp;case=accepted">{olang.KJP_PAYOUTS}</a></li>
+                <li class="breadcrumb-item active" aria-current="page" dir="ltr">#{poutID}</li>
+            </ol>
+        </nav>
+        <h1 class="kj-page-title">{olang.KJP_PAYOUTS} <span class="text-body-secondary" dir="ltr">#{poutID}</span></h1>
+    </div>
+</div>
 
-          <tr>
-            <th scope="row">{olang.KJP_MEMBER} </th>
-            <td>{payout_user}</td>
-          </tr>
+<div class="card">
+<INCLUDE NAME="pages_header" PATH="../plugins/kleeja_payment/html/admin/">
+<div class="card-body">
 
-          <tr>
-            <th scope="row">{olang.KJP_PAY_MTHD} </th>
-            <td>{payout_method}</td>
-          </tr>
+<IF NAME="have_payout">
 
-          <tr>
-            <th scope="row">{olang.KJP_PAY_AMNT} </th>
-            <td>{payout_amount}</td>
-          </tr>
+<div class="card">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item kj-kv"><span>{olang.KJP_POUT_ID}</span><span dir="ltr">{payout_id}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_MEMBER}</span><span>{payout_user}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_PAY_MTHD}</span><span>{payout_method}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_PAY_AMNT}</span><span dir="ltr">{payout_amount}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_POUT_ST}</span><span class="kj-badge is-neutral">{payout_state}</span></li>
+        <li class="list-group-item kj-kv"><span>{olang.KJP_DATE_TIME}</span><span dir="ltr">{payout_date_time}</span></li>
+        <LOOP NAME="viewMoreTable">
+        <li class="list-group-item kj-kv"><span>{{tableName}}</span><span dir="ltr" class="text-break">{{tableValue}}</span></li>
+        </LOOP>
+    </ul>
 
-          <tr>
-            <th scope="row">{olang.KJP_POUT_ST} </th>
-            <td>{payout_state}</td>
-          </tr>
+    <IF NAME="payout_is_sent">
+    <!-- ask the payment method if the money arrived -->
+    <form method="post" action="{FormAction}" class="card-footer text-end">
+        <input type="hidden" name="payoutID" value="{payout_id}">
+        {H_FORM_KEYS}
+        <button type="submit" name="checkPayout" value="1" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-rotate" aria-hidden="true"></i><span>{olang.KJP_CHECK_POUT}</span>
+        </button>
+    </form>
+    </IF>
+</div>
 
-          <tr>
-            <th scope="row">{olang.KJP_DATE_TIME} </th>
-            <td>{payout_date_time}</td>
-          </tr>
-      
-      <LOOP NAME="viewMoreTable">
-              <tr>
-            <th scope="row">{{tableName}} </th>
-            <td>{{tableValue}}</td>
-          </tr>
-      </LOOP>
-      
-        </tbody>
-      </table>   
+<ELSE>
 
-      <IF NAME="payout_state == sent">
+<div class="card">
+    <div class="card-body text-center py-5">
+        <span class="kj-icon-tile is-lg is-secondary mb-3"><i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i></span>
+        <p class="text-body-secondary mb-0">{olang.KJP_NO_POUT_ID}</p>
+    </div>
+</div>
 
-        <form action="{FormAction}" method="POST">
-          <input type="hidden" name="payoutID" value="{payout_id}">
-        <button type="submit" name="checkPayout" class="btn btn-success">Check Payout</button>
-      </form>
-      
-      </IF>
-      <ELSE>
-      
-      <div class="alert alert-info" role="alert">
-        {olang.KJP_NO_POUT_ID}
-      </div>
-      
-      </IF>
-      
-        </div>
-      </div>
+</IF>
+
+</div>
+</div>

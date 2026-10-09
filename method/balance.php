@@ -1,19 +1,27 @@
 <?php
 
+/*
+ * Balance Method, the members pay with the balance that they earned from their files
+ */
+
+// prevent illegal run
+if (! defined('IN_PLUGINS_SYSTEM')) {
+    exit;
+}
+
 class kjPayMethod_balance implements KJPaymentMethod
 {
-    private $currency;
-    private $successPayment     = false; // its return the payment state after checking it
-    private $varsForCreate      = []; // some methods will work in kleeja without leaving the website
-    private $toGlobal           = []; // the list of vars that we want to export it to kleeja
-    private $downloadLinkMailer = null; // the mail that we want to send download link to it 
+    private string $currency;
+    private $successPayment = false; // its return the payment state after checking it
+    private $varsForCreate = []; // some methods will work in kleeja without leaving the website
+    private $toGlobal = []; // the list of vars that we want to export it to kleeja
+    private $downloadLinkMailer = ''; // the mail that we want to send download link to it
 
     public function paymentStart()
     {
         global $lang, $config;
 
-        if (! user_can('recaive_profits'))
-        {
+        if (! kjp_can('recaive_profits')) {
             /**
              * this will check for permission
              * and also it will check if user is login or not .
@@ -21,14 +29,8 @@ class kjPayMethod_balance implements KJPaymentMethod
              * if the user have this permission , that mean it's able for hem to use the balance
              */
             kleeja_err($lang['USER_PLACE'], '', true, $config['siteurl']);
-
-            exit;
-        }
-        elseif (! in_array('balance', getPaymentMethods()))
-        {
+        } elseif (! in_array('balance', getPaymentMethods())) {
             kleeja_err('it\'s not active method', '', true, $config['siteurl']);
-
-            exit;
         }
     }
 
@@ -40,29 +42,30 @@ class kjPayMethod_balance implements KJPaymentMethod
 
     public function CreatePayment(string $do, array $info)
     {
-        global $config , $olang ,$THIS_STYLE_PATH_ABS;
+        global $config;
 
-
-        $_SESSION['kj_payment'] =
-        [
-            'payment_action'    => $do ,
-            'item_id'           => g('id') ,
-            'item_name'         => $info['name'] ,
+        $_SESSION['kj_payment'] = [
+            'payment_method' => 'balance',
+            'payment_action' => $do,
+            'item_id' => (int) $info['id'],
+            'item_name' => $info['name'],
         ];
 
-        $kjFormKeyGet  = kleeja_add_form_key_get('payFor_' . $do . $info['name'] . $info['id']);
-        $kjFormKeyPost = kleeja_add_form_key('payFor_' . $do . $info['name'] . $info['id']);
+        $form_name = $this->formName($_SESSION['kj_payment']);
 
-        $this->varsForCreate['no_request']      = false; 
-        $this->varsForCreate['titlee']          = 'Pay By Balance'; 
-        $this->varsForCreate['stylee']          = 'pay_balance';
-        $this->varsForCreate['styleePath']      = file_exists($THIS_STYLE_PATH_ABS . 'kj_payment/pay_balance.html') ? $THIS_STYLE_PATH_ABS . 'kj_payment/' : dirname(__FILE__) . '/../html/';
-        $this->varsForCreate['FormAction']      = $config['siteurl'] . 'go.php?go=kj_payment&method=balance&action=check&' . $kjFormKeyGet;
-        $this->varsForCreate['itemName']        = $info['name'];
-        $this->varsForCreate['payAction']       = sprintf($olang['KJP_ACT_' . strtoupper($do)], $info['name']);
+        $this->varsForCreate['no_request'] = false;
+        $this->varsForCreate['titlee'] = 'Pay By Balance';
+        $this->varsForCreate['stylee'] = 'pay_balance';
+        $this->varsForCreate['styleePath'] = kjp_template_path('pay_balance');
+        $this->varsForCreate['FormAction'] =
+            $config['siteurl'] .
+            'go.php?go=kj_payment&amp;method=balance&amp;action=check&amp;' .
+            kleeja_add_form_key_get($form_name);
+        $this->varsForCreate['itemName'] = $info['name'];
+        $this->varsForCreate['payAction'] = kjp_action_title($do, (string) $info['name']);
         $this->varsForCreate['paymentCurrency'] = $this->currency;
-        $this->varsForCreate['itemPrice']       = $info['price'] . ' ' . $this->currency;
-        $this->varsForCreate['kjFormKeyPost']   = $kjFormKeyPost;
+        $this->varsForCreate['itemPrice'] = kjp_price($info['price'], $this->currency);
+        $this->varsForCreate['kjFormKeyPost'] = kleeja_add_form_key($form_name);
     }
 
     public function varsForCreatePayment(): array
@@ -70,164 +73,84 @@ class kjPayMethod_balance implements KJPaymentMethod
         return $this->varsForCreate;
     }
 
-
     public function checkPayment()
     {
-        global $config , $usrcp , $SQL , $dbprefix , $d_groups ,$userinfo , $lang , $olang , $subscription;
+        global $config, $usrcp, $d_groups, $lang, $olang, $subscription;
 
-        if (! $usrcp->name())
-        {
+        $session = $_SESSION['kj_payment'] ?? [];
+
+        if (! $usrcp->name()) {
             // to be sure 100% , thats we are on the right way
             kleeja_err($lang['USER_PLACE'], '', true, $config['siteurl']);
-
-            exit;
         }
         // is he comming from our page
-        elseif (! isset($_SESSION['kj_payment']) || empty($_SESSION['kj_payment']))
-        {
-            kleeja_err('What Are U Doing Here ??', '', true, $config['siteurl']);
-
-            exit;
+        elseif (empty($session['payment_action']) || ($session['payment_method'] ?? '') != 'balance') {
+            kleeja_err($lang['ERROR_NAVIGATATION'], '', true, $config['siteurl']);
         }
         // really from our page
-        elseif (! kleeja_check_form_key('payFor_' . $_SESSION['kj_payment']['payment_action'] . $_SESSION['kj_payment']['item_name'] . $_SESSION['kj_payment']['item_id'])
-        || ! kleeja_check_form_key_get('payFor_' . $_SESSION['kj_payment']['payment_action'] . $_SESSION['kj_payment']['item_name'] . $_SESSION['kj_payment']['item_id']))
-        {
+        elseif (
+            ! kleeja_check_form_key($this->formName($session)) ||
+            ! kleeja_check_form_key_get($this->formName($session))
+        ) {
             kleeja_err($lang['INVALID_FORM_KEY'], '', true, $config['siteurl']);
-
-            exit;
         }
+
+        $itemInfo = false;
+
         // really really , check if the item is exists
-        elseif (($_SESSION['kj_payment']['payment_action'] == 'buy_file') && ! $itemInfo = getFileInfo($_SESSION['kj_payment']['item_id']))
-        {
-            kleeja_err($olang['KJP_FL_NT_FUND'], '', true, $config['siteurl']);
-
-            exit;
+        if ($session['payment_action'] == 'buy_file') {
+            if (! ($itemInfo = getFileInfo($session['item_id']))) {
+                kleeja_err($olang['KJP_FL_NT_FUND'], '', true, $config['siteurl']);
+            }
+        } elseif ($session['payment_action'] == 'join_group') {
+            if (! ($itemInfo = getGroupInfo($d_groups, (int) $session['item_id']))) {
+                kleeja_err($olang['KJP_GP_NT_FUND'], '', true, $config['siteurl'] . 'go.php?go=paid_group');
+            }
+        } elseif ($session['payment_action'] == 'subscripe') {
+            if (! $session['item_id'] || ! ($itemInfo = $subscription->get($session['item_id']))) {
+                kleeja_err($lang['ERROR_NAVIGATATION'], '', true, $config['siteurl'] . 'go.php?go=subscription');
+            }
         }
-        elseif (($_SESSION['kj_payment']['payment_action'] == 'join_group') && ! $itemInfo = getGroupInfo($d_groups, $_SESSION['kj_payment']['item_id']))
-        {
-            kleeja_err($olang['KJP_GP_NT_FUND'], '', true, $config['siteurl'] . 'go.php?go=paid_group');
 
-            exit;
-        }
-        elseif (($_SESSION['kj_payment']['payment_action'] == 'subscripe') && ! $itemInfo = $subscription->get($_SESSION['kj_payment']['item_id']))
-        {
-            kleeja_err('ERROR REQUEST', '', true, $config['siteurl'] . 'go.php?go=subscription');
-
-            exit;
-        }
         //export here $itemInfo
-        is_array($plugin_run_result = Plugins::getInstance()->run('KjPay:itemInfoExport_' . $_SESSION['kj_payment']['payment_action'], get_defined_vars())) ? extract($plugin_run_result) : null; //run hook
+        extract(runHook('KjPay:itemInfoExport_' . $session['payment_action'], get_defined_vars()));
 
         // no Error , let's check if the user have this amount in hes balance or not
-        $itemPrice = $itemInfo['price'];
+        $itemPrice = is_array($itemInfo) ? (float) ($itemInfo['price'] ?? 0) : 0;
 
-        if ($itemPrice <= 0)
-        {
+        if ($itemPrice <= 0) {
             // this is free item
             kleeja_err($olang['KJP_FRE_ITM'], '', true, $config['siteurl']);
-
-            exit;
-        }
-        //get freash user balance
-        $userBalance = (float) $usrcp->get_data('balance')['balance'];
-
-        if ($itemPrice > $userBalance)
-        {
-            // son , collect some money , then come to buy
-            kleeja_err($olang['KJP_NO_BLNC'], '', true, $config['siteurl']);
-
-            exit;
         }
 
         // i will take the money from you , then i will give you the item loooool
-        $userNewBalance = (float) ($userBalance - $itemPrice);
+        // it is taken only when the balance covers it, in one query
+        if (! kjp_take_balance(kjp_user_id(), $itemPrice)) {
+            // son , collect some money , then come to buy
+            kleeja_err($olang['KJP_NO_BLNC'], '', true, $config['siteurl']);
+        }
 
-        $SQL->query("UPDATE `{$dbprefix}users` SET `balance` = {$userNewBalance} WHERE `id` = {$userinfo['id']} AND `name` = '{$userinfo['name']}'");
         // The money is token now , so this item is HALAL for you Now
-        // insert to the DataBase
-        $payment_method    = 'balance';
-        $payment_state     = 'approved';
-        $payment_currency  = $this->currency;
-        $payment_action    = $_SESSION['kj_payment']['payment_action'];
-        $payment_token     = createToken();
-        $payment_amount    = $itemInfo['price'];
-        $payment_payer_ip  = get_ip();
-        $item_id           = $_SESSION['kj_payment']['item_id'];
-        $item_name         = $_SESSION['kj_payment']['item_name'];
-        $user              = $usrcp->id();
-        $payment_year      = date('Y');
-        $payment_month     = date('m');
-        $payment_day       = date('d');
-        $payment_time      = date('H:i:s');
-
-        $insert_query    = [
-            'INSERT'      => 'payment_state , payment_method , payment_amount , payment_currency , payment_token , payment_payer_ip , payment_action , item_id , item_name , user , payment_year , payment_month , payment_day , payment_time',
-            'INTO'        => "{$dbprefix}payments",
-            'VALUES'      => "'$payment_state', '$payment_method' , '$payment_amount', '$payment_currency','$payment_token', '$payment_payer_ip', '$payment_action', '$item_id' , '$item_name' , '$user', '$payment_year', '$payment_month', '$payment_day', '$payment_time'"
+        $payment = [
+            'payment_state' => 'approved',
+            'payment_method' => 'balance',
+            'payment_amount' => $itemPrice,
+            'payment_currency' => $this->currency,
+            'payment_token' => createToken(),
+            'payment_action' => $session['payment_action'],
+            'item_id' => (int) $session['item_id'],
+            'item_name' => $session['item_name'],
+            'user' => kjp_user_id(),
         ];
 
-        $SQL->build($insert_query);
-        $_SESSION['kj_payment']['db_id']         = $SQL->insert_id();
-        $_SESSION['kj_payment']['payment_token'] = $payment_token;
-        $foundedAction                           = false;
+        $payment['id'] = kjp_insert_payment($payment);
 
-        // if the payment is for joining a group and the payer is in login and member in kleeja
-        if ($_SESSION['kj_payment']['payment_action'] == 'join_group' && $usrcp->name())
-        {
-            $foundedAction               = true;
-            $this->toGlobal['groupName'] = $_SESSION['kj_payment']['item_name'];
-            $update_user                 = [
-                'UPDATE'       => "{$dbprefix}users",
-                'SET'          => 'group_id = ' . $_SESSION['kj_payment']['item_id'],
-                'WHERE'        => 'id = ' . $usrcp->id(),
-            ];
+        $_SESSION['kj_payment']['db_id'] = $payment['id'];
+        $_SESSION['kj_payment']['payment_token'] = $payment['payment_token'];
 
-            $SQL->build($update_user);
-        }
-        elseif ($_SESSION['kj_payment']['payment_action'] == 'buy_file')
-        {
-            $foundedAction               = true;
-            $this->downloadLinkMailer    = $usrcp->mail();
-            $this->toGlobal['down_link'] = $config['siteurl'] . 'do.php?downPaidFile=' . $_SESSION['kj_payment']['item_id'] . '_' . $_SESSION['kj_payment']['db_id'] . '_' . $_SESSION['kj_payment']['payment_token'];
-            $this->toGlobal['file_name'] = $_SESSION['kj_payment']['item_name'];
-            $user_id                     = getFileInfo($_SESSION['kj_payment']['item_id'], 'user')['user']; // File Owner ID
-            $user_group                  = $usrcp->get_data('group_id', $user_id)['group_id']; // get the group id
-            if (user_can('recaive_profits', $user_group))
-            {
-                // becuse the payment is successfuly , let's give some profits to the file owner
-                $user_profits = $payment_amount * $config['kjp_file_owner_profits'] / 100;
-                $SQL->query("UPDATE {$dbprefix}users SET `balance` = balance+{$user_profits} WHERE id = {$user_id}");
-            }
-        }
-        elseif ($_SESSION['kj_payment']['payment_action'] == 'subscripe' && $usrcp->name())
-        {
-            $foundedAction               = true;
-            $package_expire              = $subscription->expire_at($_SESSION['kj_payment']['item_id']);
-            $olang['KJP_JUIN_SUCCESS']   = sprintf($olang['KJP_SUCCESS_SUBSCRIPE'], $_SESSION['kj_payment']['item_name'], date('Y/m/d', $package_expire));
-            $this->toGlobal['olang']     = $olang;
-            $update_user                 = [
-                'UPDATE'       => "{$dbprefix}users",
-                'SET'          => 'package = ' . $_SESSION['kj_payment']['item_id'] . " , package_expire = {$package_expire}",
-                'WHERE'        => "id = '" . $usrcp->id() . "'"  ,
-            ];
+        $this->downloadLinkMailer = (string) $usrcp->mail();
+        $this->toGlobal = kjp_apply_payment($payment);
 
-            $SQL->build($update_user);
-        }
-
-        if (! $foundedAction)
-        {
-            $toGlobal = [];
-            //export here $toGlobal and do what u want
-            is_array($plugin_run_result = Plugins::getInstance()->run('KjPay:notFoundedAction_' . $_SESSION['kj_payment']['payment_action'], get_defined_vars())) ? extract($plugin_run_result) : null; //run hook
-            if (count($toGlobal) !== 0)
-            {
-                foreach ($toGlobal as $key => $value)
-                {
-                    $this->toGlobal[$key] = $value;
-                }
-            }
-        }
         // now we can say that the payment made successfuly
         $this->successPayment = true;
     }
@@ -237,7 +160,6 @@ class kjPayMethod_balance implements KJPaymentMethod
         return $this->successPayment;
     }
 
-
     public function getGlobalVars(): array
     {
         return $this->toGlobal;
@@ -245,9 +167,8 @@ class kjPayMethod_balance implements KJPaymentMethod
 
     public function linkMailer(): string
     {
-        return $this->downloadLinkMailer;
+        return (string) $this->downloadLinkMailer;
     }
-
 
     public function createPayout(array $itemInfo)
     {
@@ -261,15 +182,17 @@ class kjPayMethod_balance implements KJPaymentMethod
 
     public static function permission(string $permission): bool
     {
-        switch ($permission) 
-        {
-            case 'createPayment':
-                return true;
-                break;
-                
-            default:
-                return false;
-                break;
-        }
+        return $permission == 'createPayment';
+    }
+
+    /**
+     * name of the form key of a payment, the confirmation page and its check use the same one
+     *
+     * @param  array  $payment from the session
+     * @return string
+     */
+    private function formName(array $payment): string
+    {
+        return 'payFor_' . $payment['payment_action'] . $payment['item_name'] . $payment['item_id'];
     }
 }

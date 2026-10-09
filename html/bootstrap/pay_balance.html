@@ -1,0 +1,26 @@
+<IF NAME="is_style_supported">
+
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7 col-xl-6">
+        <div class="card shadow-sm text-center">
+            <div class="card-body p-4 p-md-5">
+                <span class="icon-box icon-box-lg rounded-circle bg-primary-subtle text-primary-emphasis mb-4"><i class="fa-solid fa-wallet"></i></span>
+                <div class="small text-body-secondary">{olang.KJP_PY_4}</div>
+                <h1 class="h4 fw-bold mb-3">{payAction}</h1>
+                <div class="small text-body-secondary">{olang.KJP_PRC}</div>
+                <div class="display-6 fw-bold mb-4"><bdi>{itemPrice}</bdi></div>
+
+                <form method="post" action="{FormAction}">
+                    {kjFormKeyPost}
+                    <button type="submit" name="buy_item" value="1" class="btn btn-success btn-lg px-5">
+                        <i class="fa-solid fa-check me-2"></i>{olang.KJP_BUY}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

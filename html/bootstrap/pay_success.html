@@ -1,0 +1,47 @@
+<IF NAME="is_style_supported">
+
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7 col-xl-6">
+        <div class="card shadow-sm text-center">
+            <div class="card-body p-4 p-md-5">
+                <span class="icon-box icon-box-lg rounded-circle bg-success-subtle text-success-emphasis mb-4"><i class="fa-solid fa-check"></i></span>
+                <h1 class="h4 fw-bold mb-3">{olang.KJP_SCES_PAY}</h1>
+
+                <IF NAME="down_link">
+
+                <p class="text-body-secondary mb-4">{olang.KJP_FILE_NAME}: <span class="fw-semibold text-body text-break">{file_name}</span></p>
+
+                <IF NAME="showMailForm">
+                <!-- the link could not be sent, the buyer types his e-mail address -->
+                <form action="{FormAction}" method="post" class="text-start">
+                    {kjFormKeyPost}
+                    <label for="kjp-buyer-mail" class="form-label">{olang.KJP_MAIL_INFO_1}</label>
+                    <div class="input-group">
+                        <input type="email" name="buyerMail" class="form-control" id="kjp-buyer-mail" dir="ltr" aria-describedby="kjp-mail-help" placeholder="{olang.KJP_MAIL}" autocomplete="email" required>
+                        <button type="submit" name="sendMail" value="1" class="btn btn-primary px-3">
+                            <i class="fa-regular fa-paper-plane me-1"></i>{lang.SUBMIT}
+                        </button>
+                    </div>
+                    <div id="kjp-mail-help" class="form-text">{olang.KJP_MAIL_INFO_2}</div>
+                </form>
+                <ELSE>
+                <p class="text-body-secondary mb-4">{olang.KJP_DOWN_INFO_2}</p>
+
+                <a href="{down_link}" class="btn btn-primary btn-lg px-4" target="_blank">
+                    <i class="fa-solid fa-download me-2"></i>{lang.CLICK_DOWN}
+                </a>
+                </IF>
+
+                <ELSE>
+
+                <p class="lead mb-0">{olang.KJP_JUIN_SUCCESS} <span class="fw-semibold">{groupName}</span></p>
+
+                </IF>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

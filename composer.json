@@ -1,5 +1,23 @@
 {
-	"require": {
-		"paypal/rest-api-sdk-php": "*"
-	}
+    "name": "kleeja/kleeja_payment",
+    "description": "Kleeja plugin to sell files, paid groups and subscriptions with PayPal and Stripe.",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0.2",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "paypal/paypal-server-sdk": "^2.4",
+        "stripe/stripe-php": "^21.3"
+    },
+    "conflict": {
+        "symfony/http-foundation": ">=6.0,<6.4.29"
+    },
+    "config": {
+        "platform": {
+            "php": "8.0.2"
+        },
+        "autoloader-suffix": "KleejaPayment",
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
 }

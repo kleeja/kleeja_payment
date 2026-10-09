@@ -1,0 +1,293 @@
+<IF NAME="is_style_supported">
+
+<div class="d-flex align-items-center gap-3 mb-4">
+    <span class="icon-box rounded-3 bg-primary-subtle text-primary-emphasis"><i class="fa-solid fa-wallet"></i></span>
+    <div>
+        <h1 class="h3 fw-bold mb-0">{title}</h1>
+        <p class="text-body-secondary mb-0">{olang.KJP_BLNC}: <bdi class="fw-semibold text-body">{user_balance}</bdi></p>
+    </div>
+</div>
+
+<ul class="nav nav-pills flex-nowrap overflow-auto gap-1 pb-1 mb-4">
+    <li class="nav-item">
+        <a class="nav-link text-nowrap<IF NAME="case == cp"> active</IF>" href="{action}&amp;case=cp">{olang.R_KJ_PAYMENT_OPTIONS}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-nowrap<IF NAME="case == pricing_file"> active</IF>" href="{action}&amp;case=pricing_file">{olang.KJP_PRC_FILE}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-nowrap<IF NAME="case == my_paid_files"> active</IF>" href="{action}&amp;case=my_paid_files">{olang.KJP_PAID_FILE}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-nowrap<IF NAME="case == files_payments"> active</IF>" href="{action}&amp;case=files_payments">{olang.KJP_FRO}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-nowrap<IF NAME="case == withdrawals"> active</IF>" href="{action}&amp;case=withdrawals">{olang.KJP_WTHDR}</a>
+    </li>
+</ul>
+
+
+<IF NAME="case == cp">
+
+<div class="row g-4">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4 d-flex align-items-center gap-3">
+                <span class="icon-box rounded-3 bg-success-subtle text-success-emphasis"><i class="fa-solid fa-coins"></i></span>
+                <div>
+                    <div class="small text-body-secondary">{olang.KJP_BLNC}</div>
+                    <div class="fs-4 fw-bold"><bdi>{user_balance}</bdi></div>
+                </div>
+            </div>
+        </div>
+
+        <IF NAME="config.kjp_active_subscriptions">
+        <div class="card shadow-sm">
+            <div class="card-body p-4 d-flex align-items-center gap-3">
+                <span class="icon-box rounded-3 bg-warning-subtle text-warning-emphasis"><i class="fa-solid fa-star"></i></span>
+                <div>
+                    <div class="small text-body-secondary">{olang.KJP_POINTS}</div>
+                    <div class="fs-4 fw-bold">{user_subs_points}</div>
+                </div>
+            </div>
+        </div>
+        </IF>
+    </div>
+
+    <div class="col-md-7 col-lg-8">
+        <!-- ask for an amount of the balance -->
+        <form action="{action}" method="post" class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h5 fw-semibold mb-4">{olang.KJP_WTHDR}</h2>
+
+                <div class="mb-3">
+                    <label for="kjp-amount" class="form-label">{olang.KJP_ENTR_AMNT}</label>
+                    <div class="input-group">
+                        <input type="number" name="AmountNumber" class="form-control" id="kjp-amount" dir="ltr" min="0" step="0.01" inputmode="decimal" required>
+                        <span class="input-group-text">{currency}</span>
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <label for="kjp-password" class="form-label">{olang.KJP_ENTR_PASS}</label>
+                    <input type="password" name="userPass" class="form-control" id="kjp-password" autocomplete="current-password" required>
+                </div>
+
+                <input type="hidden" name="PayoutMethod" value="paypal">
+            </div>
+
+            <div class="card-footer bg-body-tertiary py-3 px-4 d-flex justify-content-end">
+                {withdraw_form_key}
+                <button type="submit" name="requestAmount" value="1" class="btn btn-primary px-4">
+                    <i class="fa-solid fa-money-bill-transfer me-2"></i>{lang.SUBMIT}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<ELSEIF NAME="case == withdrawals">
+
+<IF NAME="havePayout">
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_POUT_ID}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_PAY_AMNT}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                    <th scope="col">{olang.KJP_POUT_ST}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payouts">
+                <tr>
+                    <th scope="row" class="text-body-secondary fw-normal">{{ID}}</th>
+                    <td>{{METHOD}}</td>
+                    <td class="text-nowrap"><bdi>{{AMOUNT}}</bdi></td>
+                    <td class="text-nowrap" dir="ltr">{{DATE_TIME}}</td>
+                    <td>
+                        <IF LOOP="STATE == cancel">
+                        <span class="badge bg-danger-subtle text-danger-emphasis">{{STATE_LANG}}</span>
+                        <ELSEIF LOOP="STATE == verify">
+                        <span class="badge bg-warning-subtle text-warning-emphasis">{{STATE_LANG}}</span>
+                        <ELSEIF LOOP="STATE == sent">
+                        <span class="badge bg-primary-subtle text-primary-emphasis">{{STATE_LANG}}</span>
+                        <ELSE>
+                        <span class="badge bg-success-subtle text-success-emphasis">{{STATE_LANG}}</span>
+                        </IF>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="d-flex justify-content-center mt-4" aria-label="pagination">{page_nums}</nav>
+<ELSE>
+<div class="card shadow-sm text-center">
+    <div class="card-body p-5">
+        <span class="icon-box icon-box-lg rounded-circle bg-body-tertiary text-body-secondary mb-3"><i class="fa-solid fa-money-bill-transfer"></i></span>
+        <p class="lead text-body-secondary mb-0">{olang.KJP_NO_POUT_YET}</p>
+    </div>
+</div>
+</IF>
+
+
+<ELSEIF NAME="case == files_payments">
+
+<IF NAME="havePayments">
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">{olang.KJP_PAY_ID}</th>
+                    <th scope="col">{olang.KJP_FILE_NAME}</th>
+                    <th scope="col">{olang.KJP_MEMBER}</th>
+                    <th scope="col">{olang.KJP_PAY_MTHD}</th>
+                    <th scope="col">{olang.KJP_DATE_TIME}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="payments">
+                <tr>
+                    <th scope="row" class="text-body-secondary fw-normal">{{ID}}</th>
+                    <td class="fw-semibold text-break">{{FILE_NAME}}</td>
+                    <td>{{BUYER}}</td>
+                    <td>{{METHOD}}</td>
+                    <td class="text-nowrap" dir="ltr">{{DATE_TIME}}</td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="d-flex justify-content-center mt-4" aria-label="pagination">{page_nums}</nav>
+<ELSE>
+<div class="card shadow-sm text-center">
+    <div class="card-body p-5">
+        <span class="icon-box icon-box-lg rounded-circle bg-body-tertiary text-body-secondary mb-3"><i class="fa-solid fa-receipt"></i></span>
+        <p class="lead text-body-secondary mb-0">{olang.KJP_NO_FL_PMNT}</p>
+    </div>
+</div>
+</IF>
+
+
+<ELSEIF NAME="case == my_paid_files">
+
+<IF NAME="have_paid_file">
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">{olang.KJP_FILE_NAME}</th>
+                    <th scope="col">{olang.KJP_PRC}</th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">{olang.KJP_ACTION}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <LOOP NAME="all_paid_file">
+                <tr>
+                    <th scope="row" class="text-body-secondary fw-normal">{{id}}</th>
+                    <td class="text-break"><a href="{{link}}" target="_blank" class="fw-semibold text-decoration-none">{{name}}</a></td>
+                    <td class="text-nowrap"><bdi>{{price}}</bdi></td>
+                    <td class="text-end">
+                        <form method="post" action="{action}&amp;case=pricing_file">
+                            <input type="hidden" name="select_file_id" value="{{id}}">
+                            <button type="submit" name="open_file" value="1" class="btn btn-outline-primary btn-sm text-nowrap">
+                                <i class="fa-solid fa-pen me-1"></i>{olang.KJP_EDT_PRC}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </LOOP>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="d-flex justify-content-center mt-4" aria-label="pagination">{page_nums}</nav>
+<ELSE>
+<div class="card shadow-sm text-center">
+    <div class="card-body p-5">
+        <span class="icon-box icon-box-lg rounded-circle bg-body-tertiary text-body-secondary mb-3"><i class="fa-solid fa-tags"></i></span>
+        <p class="lead text-body-secondary mb-0">{olang.KJP_NO_PAID_FILES}</p>
+    </div>
+</div>
+</IF>
+
+
+<ELSEIF NAME="case == pricing_file">
+
+<IF NAME="OpenAlert">
+<div class="alert alert-{AlertRole}" role="alert">{AlertMsg}</div>
+</IF>
+
+<IF NAME="show_price_panel">
+
+<form method="post" action="{action}&amp;case=pricing_file" class="card shadow-sm">
+    <div class="card-body p-4">
+        <h2 class="h5 fw-semibold mb-4">{olang.KJP_FILE_INFO}</h2>
+
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item d-flex justify-content-between gap-3 px-0">
+                <span class="text-body-secondary">{olang.KJP_FILE_NAME}</span>
+                <span class="fw-medium text-end text-break">{FileName}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between gap-3 px-0">
+                <span class="text-body-secondary">{olang.KJP_FILE_OWNR}</span>
+                <span class="fw-medium text-end">{FileUser}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between gap-3 px-0">
+                <span class="text-body-secondary">{olang.KJP_FILE_SZE}</span>
+                <span class="fw-medium text-end"><bdi>{FileSize}</bdi></span>
+            </li>
+        </ul>
+
+        <input type="hidden" name="price_file_id" value="{FileID}">
+
+        <label for="kjp-price" class="form-label">{olang.KJP_PRC}</label>
+        <div class="input-group">
+            <input type="number" class="form-control" id="kjp-price" name="price_file" value="{FilePrice}" dir="ltr" min="{min_price}" max="{max_price}" step="0.01" inputmode="decimal" required>
+            <span class="input-group-text">{currency}</span>
+        </div>
+        <div class="form-text" dir="ltr">{min_price} - {max_price} {currency}</div>
+    </div>
+
+    <div class="card-footer bg-body-tertiary py-3 px-4 d-flex justify-content-end">
+        {price_form_key}
+        <button type="submit" name="set_price" value="1" class="btn btn-primary px-4">
+            <i class="fa-solid fa-tag me-2"></i>{olang.KJP_SET_PRC}
+        </button>
+    </div>
+</form>
+
+<ELSE>
+
+<form method="post" action="{action}&amp;case=pricing_file" class="card shadow-sm">
+    <div class="card-body p-4">
+        <label for="kjp-file" class="form-label fw-semibold">{olang.KJP_ENT_ID_URL}</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="kjp-file" name="select_file_id" dir="ltr" required>
+            <button type="submit" name="open_file" value="1" class="btn btn-primary px-3">
+                <i class="fa-regular fa-folder-open me-1"></i>{olang.KJP_OPN_FILE}
+            </button>
+        </div>
+    </div>
+</form>
+
+</IF>
+
+</IF>
+
+<ELSE>
+<p>{olang.KJP_STYLE_NOT_SUPPORTED}</p>
+</IF>

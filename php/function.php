@@ -258,7 +258,7 @@ function getGroupInfo($groupData, $getGroup = 'all')
         //not the default groups, not the group of the new members, and it has a price
         if (
             $data['data']['group_id'] <= 3 ||
-            $data['data']['group_is_default'] != 0 ||
+            (int) $data['data']['group_is_default'] !== 0 ||
             ($data['configs']['kjp_join_price'] ?? 0) <= 0
         ) {
             continue;
@@ -311,17 +311,17 @@ function KJPayFinalData()
         $row = payment_more_info('from_db', $row);
         $in = ['all'];
 
-        if ($row['payment_year'] == date('Y') && $row['payment_month'] == date('m')) {
+        if ((int) $row['payment_year'] === (int) date('Y') && (int) $row['payment_month'] === (int) date('m')) {
             $in[] = 'monthly';
 
-            if ($row['payment_day'] == date('d')) {
+            if ((int) $row['payment_day'] === (int) date('d')) {
                 $in[] = 'daily';
             }
         }
 
         $method = $row['payment_method'];
         //the fees of PayPal are known, so its amount is the net profit
-        $amount = (float) $row['payment_amount'] - ($method == 'paypal' ? (float) ($row['paypal_payment_fees'] ?? 0) : 0);
+        $amount = (float) $row['payment_amount'] - ($method === 'paypal' ? (float) ($row['paypal_payment_fees'] ?? 0) : 0);
 
         foreach ($in as $period) {
             $periods[$period]++;
@@ -400,9 +400,9 @@ function get_archive($date = '30-2-yyyy')
 
     $parts = array_map('intval', explode('-', (string) $date));
 
-    if (count($parts) == 3) {
+    if (count($parts) === 3) {
         $date = ['year' => $parts[2], 'month' => $parts[1], 'day' => $parts[0]];
-    } elseif (count($parts) == 2) {
+    } elseif (count($parts) === 2) {
         $date = ['year' => $parts[1], 'month' => $parts[0]];
     } else {
         $date = ['year' => (int) date('Y'), 'month' => (int) date('m')];
@@ -532,7 +532,7 @@ function createToken($length = 16)
  */
 function payment_more_info($action, $data = [])
 {
-    if ($action == 'to_db') {
+    if ($action === 'to_db') {
         $return = [];
 
         foreach ($data as $key => $value) {
@@ -557,7 +557,7 @@ function payment_more_info($action, $data = [])
         $part = explode('->', $part, 2);
 
         //a detail never replaces a column of the row
-        if (count($part) == 2 && $part[0] !== '' && ! array_key_exists($part[0], $data)) {
+        if (count($part) === 2 && $part[0] !== '' && ! array_key_exists($part[0], $data)) {
             $data[$part[0]] = $part[1];
         }
     }
@@ -751,7 +751,7 @@ function kjp_has_download_access($file_id): bool
     $cookie = explode('_', (string) $usrcp->kleeja_get_cookie('downloadFile_' . (int) $file_id));
 
     if (
-        count($cookie) != 3 ||
+        count($cookie) !== 3 ||
         (int) $cookie[0] !== (int) $file_id ||
         (int) $cookie[1] !== (int) $payment['id'] ||
         ! hash_equals((string) $payment['payment_token'], $cookie[2])
@@ -869,11 +869,11 @@ function kjp_payment_canceled(array $payment_info): void
 
     unset($_SESSION['kj_payment']);
 
-    if ($payment_info['payment_action'] == 'buy_file') {
+    if ($payment_info['payment_action'] === 'buy_file') {
         redirect($config['siteurl'] . 'do.php?file=' . (int) $payment_info['item_id']);
-    } elseif ($payment_info['payment_action'] == 'join_group') {
+    } elseif ($payment_info['payment_action'] === 'join_group') {
         redirect($config['siteurl'] . 'go.php?go=paid_group');
-    } elseif ($payment_info['payment_action'] == 'subscripe') {
+    } elseif ($payment_info['payment_action'] === 'subscripe') {
         redirect($config['siteurl'] . 'go.php?go=subscription');
     }
 
@@ -946,7 +946,7 @@ function kjp_apply_payment(array $payment): array
     $buyer = (int) $payment['user'];
     $item_id = (int) $payment['item_id'];
 
-    if ($action == 'join_group' && $buyer > 0) {
+    if ($action === 'join_group' && $buyer > 0) {
         $SQL->build([
             'UPDATE' => "{$dbprefix}users",
             'SET' => 'group_id = :group_id',
@@ -955,7 +955,7 @@ function kjp_apply_payment(array $payment): array
         ]);
 
         $toGlobal['groupName'] = $payment['item_name'];
-    } elseif ($action == 'buy_file') {
+    } elseif ($action === 'buy_file') {
         $toGlobal['file_name'] = $payment['item_name'];
         $toGlobal['down_link'] = kjp_down_link($payment);
 
@@ -974,7 +974,7 @@ function kjp_apply_payment(array $payment): array
                 );
             }
         }
-    } elseif ($action == 'subscripe' && $buyer > 0) {
+    } elseif ($action === 'subscripe' && $buyer > 0) {
         $package_expire = (int) $subscription->expire_at($item_id);
 
         $SQL->build([

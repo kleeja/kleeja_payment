@@ -85,7 +85,7 @@ function kjp_create_table(string $name): void
 
     // for SQLite, Kleeja changes every "int" of the query to the integer type, the one in "subscription_point" too,
     // so that table is made with another name then it takes its own
-    if ($SQL->driver == 'sqlite' && stripos($name, 'int') !== false) {
+    if ($SQL->driver === 'sqlite' && stripos($name, 'int') !== false) {
         $result = $SQL->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = :name", [
             'name' => $dbprefix . $name,
         ]);
@@ -159,7 +159,7 @@ function kjp_options(): array
 function kjp_config_field(string $name, string $field): string
 {
     //the keys of the payment providers are not shown on the screen
-    if ($field == 'secret') {
+    if ($field === 'secret') {
         return '<input type="password" id="' .
             $name .
             '" name="' .

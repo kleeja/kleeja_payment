@@ -142,14 +142,14 @@ class kjPayMethod_cards implements KJPaymentMethod
 
         $session = $_SESSION['kj_payment'] ?? [];
 
-        if (empty($session['db_id']) || ($session['payment_method'] ?? '') != 'cards') {
+        if (empty($session['db_id']) || ($session['payment_method'] ?? '') !== 'cards') {
             kjp_error($lang['ERROR_NAVIGATATION']);
         }
 
         // the payment that waits for the buyer
         $payment = getPaymentInfo($session['db_id'], ['payment_method' => 'cards', 'payment_state' => 'created'], true);
         $checkout_id = $payment ? (string) ($payment['stripe_session_id'] ?? '') : '';
-        $canceled = g('state') != 'success';
+        $canceled = g('state') !== 'success';
 
         if ($checkout_id === '' || (! $canceled && ! hash_equals($checkout_id, (string) g('session_id')))) {
             kjp_error($lang['ERROR_NAVIGATATION']);
@@ -174,7 +174,7 @@ class kjPayMethod_cards implements KJPaymentMethod
             $this->fail('check session ' . $checkout_id, $e->getMessage(), $olang['KJP_PAY_FAILED']);
         }
 
-        if (($checkout['status'] ?? '') != 'complete' || ($checkout['payment_status'] ?? '') != 'paid') {
+        if (($checkout['status'] ?? '') !== 'complete' || ($checkout['payment_status'] ?? '') !== 'paid') {
             if ($canceled) {
                 kjp_payment_canceled($payment);
             }
@@ -249,7 +249,7 @@ class kjPayMethod_cards implements KJPaymentMethod
 
     public static function permission(string $permission): bool
     {
-        return $permission == 'createPayment';
+        return $permission === 'createPayment';
     }
 
     /**

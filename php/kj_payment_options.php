@@ -29,7 +29,7 @@ $page_nums = '';
 $H_FORM_KEYS = kleeja_add_form_key('kj_payment_options');
 
 // the help page that the plugin had before, old links still point to it
-if ($current_smt == 'help') {
+if ($current_smt === 'help') {
     redirect($kjp_help_url);
 }
 
@@ -78,7 +78,7 @@ if (empty($current_smt)) {
                 'methodName' => $methodName . ' <span class="kj-badge is-neutral">' . $totals['num'] . '</span>',
                 // the fees of PayPal are known, other methods show the amount with the fees
                 'htmlContent' =>
-                    ($method == 'paypal' ? $olang['KJP_NT_PRFIT'] . ' : ' : '') .
+                    ($method === 'paypal' ? $olang['KJP_NT_PRFIT'] . ' : ' : '') .
                     '<span dir="ltr">' .
                     kjp_price($totals['amount'], $currency) .
                     '</span>',
@@ -135,7 +135,7 @@ if (empty($current_smt)) {
 
     $SQL->freeresult($result);
 
-    if (count($years) == 0) {
+    if (count($years) === 0) {
         $years[]['value'] = date('Y');
     }
 
@@ -143,7 +143,7 @@ if (empty($current_smt)) {
     $months = $days = [];
 
     for ($i = 1; $i < 13; $i++) {
-        $months[] = ['value' => $i, 'selected' => $i == date('n')];
+        $months[] = ['value' => $i, 'selected' => $i === (int) date('n')];
     }
 
     for ($i = 1; $i < 32; $i++) {
@@ -151,7 +151,7 @@ if (empty($current_smt)) {
     }
 
     // show all transactions .
-} elseif ($current_smt == 'all_transactions') {
+} elseif ($current_smt === 'all_transactions') {
     $stylee = 'all_transactions';
 
     // get all transactions informations
@@ -169,14 +169,14 @@ if (empty($current_smt)) {
     ];
 
     // show daily transactions
-    if (g('today', 'int') == 1) {
+    if (g('today', 'int') === 1) {
         $query['WHERE'] .= ' AND payment_year = :year AND payment_month = :month AND payment_day = :day';
         $query['BIND'] = ['year' => (int) date('Y'), 'month' => (int) date('m'), 'day' => (int) date('d')];
         $page_link .= '&amp;today=1';
         $all_trnc_page_title = $olang['KJP_D_TRNC'];
     }
     // show the transactions of this month
-    elseif (g('thismonth', 'int') == 1) {
+    elseif (g('thismonth', 'int') === 1) {
         $query['WHERE'] .= ' AND payment_year = :year AND payment_month = :month';
         $query['BIND'] = ['year' => (int) date('Y'), 'month' => (int) date('m')];
         $page_link .= '&amp;thismonth=1';
@@ -191,13 +191,13 @@ if (empty($current_smt)) {
         $query['BIND'] = ['action' => $trnc_action, 'item_id' => $trnc_item];
         $page_link .= '&amp;action=' . $trnc_action . '&amp;item_id=' . $trnc_item;
 
-        if ($trnc_action == 'buy_file') {
+        if ($trnc_action === 'buy_file') {
             $trnc_file = getFileInfo($trnc_item, 'real_filename');
             $all_trnc_page_title = sprintf(
                 $olang['KJP_PAY_OF'],
                 sprintf($olang['KJP_ACT_BUY_FILE'], $trnc_file ? $trnc_file['name'] : '#' . $trnc_item),
             );
-        } elseif ($trnc_action == 'join_group') {
+        } elseif ($trnc_action === 'join_group') {
             // if the group become for free later , it is not a paid group anymore
             $all_trnc_page_title = sprintf(
                 $olang['KJP_PAY_OF'],
@@ -253,7 +253,7 @@ if (empty($current_smt)) {
     $have_transaction = (bool) $transactions;
 
     // view payment details ..
-} elseif ($current_smt == 'view' && g('payment', 'int') > 0) {
+} elseif ($current_smt === 'view' && g('payment', 'int') > 0) {
     $stylee = 'view_payment';
     $id = g('payment', 'int');
     $PayInfo = getPaymentInfo($id, ['payment_state' => ['approved', 'canceled']]);
@@ -309,7 +309,7 @@ if (empty($current_smt)) {
             preg_replace('/[^a-z0-9_]/i', '', (string) $PayInfo['payment_method']);
         $method_payments = $olang['KJP_PAY_BY_MTHD'] . ' : ' . $payment_method;
 
-        $isCanceledPayment = $PayInfo['payment_state'] == 'canceled';
+        $isCanceledPayment = $PayInfo['payment_state'] === 'canceled';
 
         // evry method have some informations
         $viewMoreTable = [];
@@ -319,7 +319,7 @@ if (empty($current_smt)) {
                 'tableName' => $olang['KJP_VIW_TPL_' . strtoupper($key)] ?? strtoupper(kleeja_html_encode($key)),
                 // they come from the payment providers, old ones were saved as they came
                 'tableValue' =>
-                    $key == 'paypal_payment_fees' && is_numeric($value)
+                    $key === 'paypal_payment_fees' && is_numeric($value)
                         ? kjp_price($value, $PayInfo['payment_currency'])
                         : kleeja_html_encode(htmlspecialchars_decode((string) $value, ENT_QUOTES)),
             ];
@@ -327,7 +327,7 @@ if (empty($current_smt)) {
     }
 
     // set a price for file .
-} elseif ($current_smt == 'pricing_file') {
+} elseif ($current_smt === 'pricing_file') {
     $stylee = 'add_price';
     $FormAction = $page_url . '&amp;smt=pricing_file';
     $show_price_panel = $OpenAlert = false;
@@ -383,7 +383,7 @@ if (empty($current_smt)) {
             $AlertRole = 'danger';
         }
     }
-} elseif ($current_smt == 'paid_files') {
+} elseif ($current_smt === 'paid_files') {
     $stylee = 'paid_files';
     $FormAction = $page_url . '&amp;smt=pricing_file';
 
@@ -410,7 +410,7 @@ if (empty($current_smt)) {
     }
 
     $have_paid_file = (bool) $all_paid_file;
-} elseif ($current_smt == 'archive' && ig('date')) {
+} elseif ($current_smt === 'archive' && ig('date')) {
     $stylee = 'archive_data';
 
     $archive_date = preg_replace('/[^0-9-]/', '', g('date'));
@@ -420,7 +420,7 @@ if (empty($current_smt)) {
     $archiveTables = [];
 
     foreach ($Archive_data['paymentActions'] as $key => $value) {
-        $archiveTables[] = ['html' => create_Archive_Panel($key, $value, $key == 'all')];
+        $archiveTables[] = ['html' => create_Archive_Panel($key, $value, $key === 'all')];
     }
 
     extract(runHook('kjPay:addToArchive', get_defined_vars()));
@@ -475,7 +475,7 @@ if (empty($current_smt)) {
     }
 
     $havePayout = (bool) $payouts;
-} elseif ($current_smt == 'payouts') {
+} elseif ($current_smt === 'payouts') {
     $stylee = 'payouts_list';
     $action = $page_url . '&amp;smt=payouts';
     $case = in_array(g('case'), ['accepted', 'canceled'], true) ? g('case') : 'list';
@@ -483,7 +483,7 @@ if (empty($current_smt)) {
 
     // lets check if there is post order
     // for sending payout or canceling it
-    if ($case == 'list' && (ip('sendPayout') || ip('cancelPayout')) && p('payoutID', 'int') > 0) {
+    if ($case === 'list' && (ip('sendPayout') || ip('cancelPayout')) && p('payoutID', 'int') > 0) {
         if (! kleeja_check_form_key('kj_payment_options', 3600)) {
             kleeja_admin_err($lang['INVALID_FORM_KEY'], $FormAction);
         }
@@ -588,10 +588,10 @@ if (empty($current_smt)) {
     $havePayout = (bool) $payouts;
     $no_payout_msg = sprintf(
         $olang['KJP_NO_ITEM'],
-        ($case == 'accepted' ? $olang['KJP_ACCEPTED'] . ' ' : ($case == 'canceled' ? $olang['KJP_CANCELED'] . ' ' : '')) .
+        ($case === 'accepted' ? $olang['KJP_ACCEPTED'] . ' ' : ($case === 'canceled' ? $olang['KJP_CANCELED'] . ' ' : '')) .
             $olang['KJP_PAYOUTS'],
     );
-} elseif ($current_smt == 'viewPayout' && g('id', 'int') > 0) {
+} elseif ($current_smt === 'viewPayout' && g('id', 'int') > 0) {
     $stylee = 'view_payout';
     $poutID = g('id', 'int');
     $FormAction = $page_url . '&amp;smt=viewPayout&amp;id=' . $poutID;
@@ -599,14 +599,14 @@ if (empty($current_smt)) {
     $payoutInfo = getPayoutInfo($poutID);
 
     // the requests that wait for the admin are in the list of the requests
-    if ($payoutInfo && $payoutInfo['state'] == 'verify') {
+    if ($payoutInfo && $payoutInfo['state'] === 'verify') {
         $payoutInfo = false;
     }
 
     $have_payout = (bool) $payoutInfo;
 
     if ($payoutInfo) {
-        if (ip('checkPayout') && p('payoutID', 'int') == $payoutInfo['id']) {
+        if (ip('checkPayout') && p('payoutID', 'int') === (int) $payoutInfo['id']) {
             if (! kleeja_check_form_key('kj_payment_options', 3600)) {
                 kleeja_admin_err($lang['INVALID_FORM_KEY'], $FormAction);
             }
@@ -666,7 +666,7 @@ if (empty($current_smt)) {
             $payoutInfo['payout_time'];
         $payout_state = $olang['KJP_POUT_ST_' . strtoupper($payoutInfo['state'])] ?? $payoutInfo['state'];
         // the payout that the admin can ask the payment method about
-        $payout_is_sent = $payoutInfo['state'] == 'sent';
+        $payout_is_sent = $payoutInfo['state'] === 'sent';
 
         $viewMoreTable = [];
 
@@ -674,13 +674,13 @@ if (empty($current_smt)) {
             $viewMoreTable[] = [
                 'tableName' => $olang['KJP_VIW_TPL_' . strtoupper($key)] ?? strtoupper(kleeja_html_encode($key)),
                 'tableValue' =>
-                    $key == 'transaction_fees' && is_numeric($value)
+                    $key === 'transaction_fees' && is_numeric($value)
                         ? kjp_price($value, $currency)
                         : kleeja_html_encode(htmlspecialchars_decode((string) $value, ENT_QUOTES)),
             ];
         }
     }
-} elseif ($current_smt == 'subscriptions') {
+} elseif ($current_smt === 'subscriptions') {
     // dont disply `subscriptions` pages when it's disabled
     if (! $config['kjp_active_subscriptions']) {
         kleeja_admin_err($olang['KJP_SUBSCRIP_NOT_ACTIVE'], $page_url);
@@ -702,7 +702,7 @@ if (empty($current_smt)) {
                 $subscrip_days = p('subscription_time', 'int');
                 $subscrip_price = round((float) p('subscription_price'), 2);
 
-                if ('' == $subscrip_name) {
+                if ('' === $subscrip_name) {
                     kleeja_admin_err('Empty name', $action . '&amp;case=create');
                 } elseif ($subscrip_days <= 0) {
                     kleeja_admin_err('invaled time', $action . '&amp;case=create');
@@ -840,7 +840,7 @@ if (empty($current_smt)) {
 
             break;
     }
-} elseif ($current_smt == 'canceled_payment') {
+} elseif ($current_smt === 'canceled_payment') {
     $stylee = 'cancel_payment';
 
     $cancelPayments = [];
@@ -881,25 +881,25 @@ $go_menu = [
         'name' => $olang['KJP_ALL_TRNC'],
         'link' => $page_url . '&amp;smt=all_transactions',
         'goto' => 'all_transactions',
-        'current' => $current_smt == 'all_transactions',
+        'current' => $current_smt === 'all_transactions',
     ],
     'payouts' => [
         'name' => $olang['KJP_PAYOUTS'],
         'link' => $page_url . '&amp;smt=payouts',
         'goto' => 'payouts',
-        'current' => $current_smt == 'payouts',
+        'current' => $current_smt === 'payouts',
     ],
     'pricing_file' => [
         'name' => $olang['KJP_PRC_FILE'],
         'link' => $page_url . '&amp;smt=pricing_file',
         'goto' => 'pricing_file',
-        'current' => $current_smt == 'pricing_file',
+        'current' => $current_smt === 'pricing_file',
     ],
     'paid_files' => [
         'name' => $olang['KJP_PAID_FILE'],
         'link' => $page_url . '&amp;smt=paid_files',
         'goto' => 'paid_files',
-        'current' => $current_smt == 'paid_files',
+        'current' => $current_smt === 'paid_files',
     ],
     'help' => [
         'name' => $olang['KJP_HLP'],

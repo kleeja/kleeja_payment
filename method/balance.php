@@ -84,7 +84,7 @@ class kjPayMethod_balance implements KJPaymentMethod
             kleeja_err($lang['USER_PLACE'], '', true, $config['siteurl']);
         }
         // is he comming from our page
-        elseif (empty($session['payment_action']) || ($session['payment_method'] ?? '') != 'balance') {
+        elseif (empty($session['payment_action']) || ($session['payment_method'] ?? '') !== 'balance') {
             kleeja_err($lang['ERROR_NAVIGATATION'], '', true, $config['siteurl']);
         }
         // really from our page
@@ -98,15 +98,15 @@ class kjPayMethod_balance implements KJPaymentMethod
         $itemInfo = false;
 
         // really really , check if the item is exists
-        if ($session['payment_action'] == 'buy_file') {
+        if ($session['payment_action'] === 'buy_file') {
             if (! ($itemInfo = getFileInfo($session['item_id']))) {
                 kleeja_err($olang['KJP_FL_NT_FUND'], '', true, $config['siteurl']);
             }
-        } elseif ($session['payment_action'] == 'join_group') {
+        } elseif ($session['payment_action'] === 'join_group') {
             if (! ($itemInfo = getGroupInfo($d_groups, (int) $session['item_id']))) {
                 kleeja_err($olang['KJP_GP_NT_FUND'], '', true, $config['siteurl'] . 'go.php?go=paid_group');
             }
-        } elseif ($session['payment_action'] == 'subscripe') {
+        } elseif ($session['payment_action'] === 'subscripe') {
             if (! $session['item_id'] || ! ($itemInfo = $subscription->get($session['item_id']))) {
                 kleeja_err($lang['ERROR_NAVIGATATION'], '', true, $config['siteurl'] . 'go.php?go=subscription');
             }
@@ -182,7 +182,7 @@ class kjPayMethod_balance implements KJPaymentMethod
 
     public static function permission(string $permission): bool
     {
-        return $permission == 'createPayment';
+        return $permission === 'createPayment';
     }
 
     /**

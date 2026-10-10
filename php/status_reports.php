@@ -63,9 +63,9 @@ function kjp_status_report(array $args): string
         $sum['started'][$i]++;
 
         // created is a payment that the buyer did not finish, or is still paying
-        if ($row['payment_state'] != 'approved') {
+        if ($row['payment_state'] !== 'approved') {
             if (! $i) {
-                $row['payment_state'] == 'canceled' ? $canceled++ : $unfinished++;
+                $row['payment_state'] === 'canceled' ? $canceled++ : $unfinished++;
             }
 
             continue;
@@ -86,7 +86,7 @@ function kjp_status_report(array $args): string
         $item = $action . ':' . (int) $row['item_id'];
 
         // only PayPal says its fees
-        if ($method == 'paypal') {
+        if ($method === 'paypal') {
             $fees += (float) ($row['paypal_payment_fees'] ?? 0);
         }
 
@@ -168,9 +168,9 @@ function kjp_status_report(array $args): string
 
     // how much a number has changed since the previous period, like the cards of the report
     $trend = function (float $current, float $previous, string $previous_text) use ($olang): array {
-        if (round($current, 2) == round($previous, 2)) {
+        if (round($current, 2) === round($previous, 2)) {
             $trend = ['trend_icon' => 'minus', 'change' => '0%'];
-        } elseif ($previous == 0) {
+        } elseif ($previous === 0.0) {
             $trend = ['trend_icon' => 'arrow-up', 'change' => $olang['KJP_SR_NEW']];
         } else {
             $trend = [
@@ -316,7 +316,7 @@ function kjp_status_report(array $args): string
         ]
         as $state => $title
     ) {
-        if ($state == 'all' || $payouts[$state]['count']) {
+        if ($state === 'all' || $payouts[$state]['count']) {
             $payouts_rows[] = [
                 'title' => $title,
                 'count' => $payouts[$state]['count'],

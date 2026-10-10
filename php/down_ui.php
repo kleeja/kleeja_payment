@@ -26,7 +26,7 @@ $query = [
 ];
 
 //if user system is default, we use users table
-if ((int) $config['user_system'] == 1) {
+if ((int) $config['user_system'] === 1) {
     $query['SELECT'] .= ', u.name AS fusername, u.id AS fuserid';
     $query['JOINS'] = [
         [
@@ -39,13 +39,13 @@ if ((int) $config['user_system'] == 1) {
 extract(runHook('KJP:qr_download_file', get_defined_vars()));
 $result = $SQL->build($query);
 
-if ($SQL->num_rows($result) != 0) {
+if ($SQL->num_rows($result) !== 0) {
     $file_info = $SQL->fetch_array($result);
 
     $SQL->freeresult($result);
 
     // user dont have to be here if the file is for free
-    if ($file_info['price'] == 0) {
+    if ((float) $file_info['price'] === 0.0) {
         redirect($config['siteurl'] . 'do.php?id=' . $file_info['id']); // edited
     }
 
@@ -60,10 +60,10 @@ if ($SQL->num_rows($result) != 0) {
     $price = kjp_price($file_info['price']); // edited
 
     // edited -> the names are saved encoded, they are not encoded again
-    $name = $real_filename != '' ? str_replace('.' . $type, '', $real_filename) : $name;
+    $name = $real_filename !== '' ? str_replace('.' . $type, '', $real_filename) : $name;
     $name = strlen($name) > 70 ? substr($name, 0, 70) . '...' : $name;
     $fuserid = $file_info['fuserid'] ?? -1;
-    $fusername = $config['user_system'] == 1 && $fuserid > -1 ? $file_info['fusername'] : false;
+    $fusername = (int) $config['user_system'] === 1 && $fuserid > -1 ? $file_info['fusername'] : false;
     $userfolder =
         $config['siteurl'] .
         ($config['mod_writer'] ? 'fileuser-' . $fuserid . '.html' : 'ucp.php?go=fileuser&amp;id=' . $fuserid);

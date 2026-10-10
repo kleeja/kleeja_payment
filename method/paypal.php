@@ -186,7 +186,7 @@ class kjPayMethod_paypal implements KJPaymentMethod
 
         $session = $_SESSION['kj_payment'] ?? [];
 
-        if (empty($session['db_id']) || ($session['payment_method'] ?? '') != 'paypal') {
+        if (empty($session['db_id']) || ($session['payment_method'] ?? '') !== 'paypal') {
             kjp_error($lang['ERROR_NAVIGATATION']);
         }
 
@@ -199,7 +199,7 @@ class kjPayMethod_paypal implements KJPaymentMethod
         }
 
         // nothing was taken from the buyer, the money moves only with the capture below
-        if (g('state') != 'success') {
+        if (g('state') !== 'success') {
             kjp_payment_canceled($payment);
         }
 
@@ -218,12 +218,12 @@ class kjPayMethod_paypal implements KJPaymentMethod
         $unit = $order['purchase_units'][0] ?? [];
         $capture = $unit['payments']['captures'][0] ?? [];
 
-        if (! $response->isSuccess() || ($order['status'] ?? '') != 'COMPLETED' || ! $capture) {
+        if (! $response->isSuccess() || ($order['status'] ?? '') !== 'COMPLETED' || ! $capture) {
             $this->fail('capture order ' . $order_id, $this->summary($order), $olang['KJP_PAY_FAILED']);
         }
 
         // the money did not arrive yet, like a payment that PayPal is reviewing
-        if (($capture['status'] ?? '') != 'COMPLETED') {
+        if (($capture['status'] ?? '') !== 'COMPLETED') {
             $this->fail(
                 'capture order ' . $order_id,
                 'the capture is ' . ($capture['status'] ?? 'unknown'),
@@ -314,7 +314,7 @@ class kjPayMethod_paypal implements KJPaymentMethod
         // then the payout stays "sent" until the admin checks it
         $batch = $this->api('GET', '/v1/payments/payouts/' . rawurlencode($batch_id));
         $item = $batch['body']['items'][0] ?? [];
-        $state = ($item['transaction_status'] ?? '') == 'SUCCESS' ? 'recived' : 'sent';
+        $state = ($item['transaction_status'] ?? '') === 'SUCCESS' ? 'recived' : 'sent';
 
         $SQL->build([
             'UPDATE' => "{$dbprefix}payments_out",
@@ -346,7 +346,7 @@ class kjPayMethod_paypal implements KJPaymentMethod
         if (! $batch['ok']) {
             $this->error = $this->summary($batch['body']);
             kjp_log('PayPal payout ' . $id . ' check failed: ' . $this->error);
-        } elseif ($status == 'SUCCESS') {
+        } elseif ($status === 'SUCCESS') {
             $SQL->build([
                 'UPDATE' => "{$dbprefix}payments_out",
                 'SET' => "state = 'recived', payment_more_info = :info",

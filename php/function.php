@@ -81,7 +81,7 @@ function kjp_style_folder(): string
     $styles = [empty($config['style']) ? 'bootstrap' : $config['style'], trim((string) ($config['style_depend_on'] ?? ''))];
 
     foreach ($styles as $style) {
-        if (in_array($style, ['bootstrap', 'default'], true)) {
+        if (in_array($style, ['bootstrap', 'og_default'], true)) {
             return $style;
         }
     }
@@ -283,7 +283,7 @@ function getGroupInfo($groupData, $getGroup = 'all')
 
 function is_style_supported()
 {
-    //the plugin has templates for the bootstrap and the default styles,
+    //the plugin has templates for the bootstrap and the og_default styles,
     //other styles bring their own templates in a "kj_payment" folder
     return kjp_style_folder() !== '';
 }

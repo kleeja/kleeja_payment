@@ -51,7 +51,7 @@ A payment stays in **Pending Payments** until its buyer comes back. There is no 
 
 ## Styles
 
-The pages of the members have templates for the two styles of Kleeja, in `html/bootstrap` and `html/default`. A style that depends on one of them gets its templates.
+The pages of the members have templates for the `bootstrap` and `og_default` styles, in `html/bootstrap` and `html/og_default`. A style that depends on one of them gets its templates.
 
 Another style brings its own copies in a `kj_payment` folder, for example `styles/<name>/kj_payment/pay_download.html`. Until it has them, its pages say that the style is not supported.
 
@@ -74,7 +74,8 @@ Run `composer audit` before a release. The `conflict` rule in `composer.json` ke
 - The zipped libraries are gone. Install the package of a release, or run Composer as above.
 - The payments by cards are back, and they are off after the update. Turn "Active Stripe" on when the secret key is set. The publishable key is not needed anymore, and its setting is removed.
 - Payments that were created with the old PayPal API and never finished stay in the pending list.
-- The templates are made for the Bootstrap 5.3 of the `bootstrap` style, the `default` style and the control panel. A style that has its own templates in a `kj_payment` folder has to update them.
+- The templates are made for the Bootstrap 5.3 of the `bootstrap` style, the `og_default` style and the control panel. A style that has its own templates in a `kj_payment` folder has to update them.
+- The `default` style of Kleeja is now `og_default`, and the plugin has no templates for `default` anymore. A site that uses it, or a style that depends on it, moves to `og_default`.
 
 ## Other packages for this plugin
 

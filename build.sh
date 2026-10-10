@@ -23,12 +23,17 @@ composer install \
     --classmap-authoritative \
     --no-interaction
 
-# PHPMailer is the whole point of the plugin; shipping without it would leave
-# the plugin permanently idle on the sites that install this archive.
-if [ ! -f "${BUILD_DIR}/vendor/phpmailer/phpmailer/src/PHPMailer.php" ]; then
-    echo "composer did not install PHPMailer, refusing to build" >&2
-    exit 1
-fi
+# Without the PayPal and Stripe SDKs the plugin offers no payment method, so
+# an archive missing either of them is useless to the sites that install it.
+for required in \
+    vendor/autoload.php \
+    vendor/paypal/paypal-server-sdk/src/PaypalServerSdkClientBuilder.php \
+    vendor/stripe/stripe-php/lib/StripeClient.php; do
+    if [ ! -f "${BUILD_DIR}/${required}" ]; then
+        echo "composer did not install ${required}, refusing to build" >&2
+        exit 1
+    fi
+done
 
 # 3) create the release archive
 ( cd build && zip -qr "../${PLUGIN_NAME}-${VERSION}.zip" "${PLUGIN_NAME}" )

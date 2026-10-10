@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # A published release (or a manual run on a tag) builds that tag; a manual
+      # run on a branch builds the highest version tag instead.
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            tag="${{ github.event.release.tag_name }}"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            tag="${GITHUB_REF_NAME}"
+          else
+            tag="$(git tag --list '[0-9]*' --sort=-v:refname | head -n1)"
+          fi
+          if [ -z "${tag}" ]; then
+            echo "No release tag found" >&2
+            exit 1
+          fi
+          git checkout --quiet --detach "refs/tags/${tag}"
+          echo "name=${tag}" >> "$GITHUB_OUTPUT"
+          echo "Releasing ${tag}"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Lint PHP sources
+        run: |
+          for file in *.php; do
+            php -l "$file"
+          done
+
+      - name: Build release archive
+        run: |
+          chmod +x build.sh
+          ./build.sh "${{ steps.tag.outputs.name }}"
+
+      - name: Attach archive to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          files: kleeja_payment-*.zip
+          fail_on_unmatched_files: true

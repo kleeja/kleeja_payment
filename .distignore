@@ -1,0 +1,10 @@
+.git/
+.github/
+/build/
+/vendor/
+tests/
+node_modules/
+.distignore
+.gitignore
+build.sh
+phpunit.xml
